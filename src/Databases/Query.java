@@ -1,8 +1,8 @@
-package final_scheduler;
+package Databases;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-import static final_scheduler.DBConnection.conn;
+import static Databases.DBConnection.conn;
 
 /**
  *

@@ -40,22 +40,16 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void loginButtonPressed(ActionEvent event) throws IOException {
         System.out.println("Success! Username: " + usernameTextField.getText() + " || Password:" + passwordTextField.getText());
-        
-//        ResourceBundle bundle = ResourceBundle.getBundle("language_fr.properties", Locale.getDefault());
+//        Locale.setDefault(new Locale ("fr"));
+        ResourceBundle bundle = ResourceBundle.getBundle("language_files/language");
         
         if(!((usernameTextField.getText().equals("test")) && (passwordTextField.getText().equals("test")))){
 //            if(Locale.getDefault().getLanguage().equals("fr")){
 //            System.out.println("Login ERROR");
-//            Alert failedAlert = new Alert(Alert.AlertType.ERROR);
-//            failedAlert.setTitle(bundle.getString("errorTitle"));
-//            failedAlert.setContentText(bundle.getString("errorText"));
-//            failedAlert.showAndWait();   
-//            }
-            System.out.println("Login ERROR");
             Alert failedAlert = new Alert(Alert.AlertType.ERROR);
-            failedAlert.setTitle("Error");
-            failedAlert.setContentText("Login or Password Invalid");
-            failedAlert.showAndWait();
+            failedAlert.setTitle(bundle.getString("errorTitle"));
+            failedAlert.setContentText(bundle.getString("errorText"));
+            failedAlert.showAndWait();   
         }
         else {
             Parent mainViewParent = FXMLLoader.load(getClass().getResource("MainView.fxml"));

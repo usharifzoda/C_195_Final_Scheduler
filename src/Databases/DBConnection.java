@@ -1,4 +1,4 @@
-package final_scheduler;
+package Databases;
 
 import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ public class DBConnection {
     private static final String password = "53688647379";
     private static final String driver = "com.mysql.jdbc.Driver";
     
-    static Connection conn;
+    public static Connection conn;
     
     public static void makeConnection() throws ClassNotFoundException, SQLException, Exception{
         Class.forName(driver);

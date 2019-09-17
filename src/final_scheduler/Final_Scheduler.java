@@ -5,13 +5,15 @@
  */
 package final_scheduler;
 
+import Databases.Query;
+import Databases.DBConnection;
 import com.mysql.jdbc.Statement;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import static final_scheduler.DBConnection.conn;
+import static Databases.DBConnection.conn;
 import java.sql.ResultSet;
 
 /**

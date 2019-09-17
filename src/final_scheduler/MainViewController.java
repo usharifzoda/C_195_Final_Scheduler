@@ -37,7 +37,8 @@ public class MainViewController implements Initializable {
         
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
         window.setScene(mainViewScene);
-        window.show();
+        window.show(); 
+        
         
     }
     
