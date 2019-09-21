@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FXMLViews.AddEditDeleteCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddEditDeleteCustomerController">
    <children>
       <TableView fx:id="tableView" layoutX="104.0" layoutY="12.0" prefHeight="440.0" prefWidth="253.0">
         <columns>

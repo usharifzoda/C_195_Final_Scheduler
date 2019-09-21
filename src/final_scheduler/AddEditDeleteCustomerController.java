@@ -7,11 +7,15 @@ package final_scheduler;
 
 import Databases.Query;
 import Classes.Customer;
+import Classes.Inventory;
+import Databases.CustomerDAO;
 import java.awt.Desktop.Action;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,7 +51,7 @@ public class AddEditDeleteCustomerController implements Initializable {
     public void cancelActionHandler(ActionEvent e) throws IOException {
         System.out.println("Cancel Button Pressed. Going back to the Main View...");
         
-        Parent mainViewParent = FXMLLoader.load(getClass().getResource("MainView.fxml"));
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/MainView.fxml"));
         Scene mainViewScene = new Scene(mainViewParent);
             
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
@@ -57,10 +61,23 @@ public class AddEditDeleteCustomerController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        try {
+            Inventory.allCustomers = CustomerDAO.getAllCustomers();
+            
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(AddEditDeleteCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         customerId.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerId"));
         customerName.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerName"));
-        String sqlStatement = "SELECT customerId, customerName FROM employee_tbl";
-        Query.makeQuery(sqlStatement);
+        
+        tableView.setItems(Inventory.allCustomers);
+        
+//        String sqlStatement = "SELECT customerId, customerName FROM employee_tbl";
+//        Query.makeQuery(sqlStatement);
         
     }    
     

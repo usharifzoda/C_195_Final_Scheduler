@@ -32,7 +32,7 @@ public class MainViewController implements Initializable {
 
     public void addEditDeleteCustomerButtonPressed(ActionEvent event) throws IOException{
 
-        Parent mainViewParent = FXMLLoader.load(getClass().getResource("AddEditDeleteCustomer.fxml"));
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/AddEditDeleteCustomer.fxml"));
         Scene mainViewScene = new Scene(mainViewParent);
         
         Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();

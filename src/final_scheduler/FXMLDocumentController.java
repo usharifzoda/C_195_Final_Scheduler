@@ -52,7 +52,7 @@ public class FXMLDocumentController implements Initializable {
             failedAlert.showAndWait();   
         }
         else {
-            Parent mainViewParent = FXMLLoader.load(getClass().getResource("MainView.fxml"));
+            Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/MainView.fxml"));
             Scene mainViewScene = new Scene(mainViewParent);
             
             Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
