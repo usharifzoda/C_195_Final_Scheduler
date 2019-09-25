@@ -5,15 +5,12 @@
  */
 package final_scheduler;
 
-import Databases.Query;
 import Classes.Customer;
 import Classes.Inventory;
 import Databases.CustomerDAO;
-import java.awt.Desktop.Action;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,12 +56,50 @@ public class AddEditDeleteCustomerController implements Initializable {
         window.show();
     }
     
+    public void editCustomerButtonHandler(ActionEvent e) throws IOException {
+        
+        if(tableView.getSelectionModel().getSelectedItem() == null ){
+            System.out.println("Please select a customer to Edit");
+            
+        }else {
+            System.out.println("Edit Customer button pressed...");
+        
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/FXMLViews/EditCustomerView.fxml"));
+            Parent editCustomerView = loader.load();
+            
+            Scene editCustomerScene = new Scene(editCustomerView);
+            EditCustomerViewController controller = loader.getController();
+            controller.initEditCustomer(tableView.getSelectionModel().getSelectedItem(), 
+                                        tableView.getSelectionModel().getSelectedIndex());
+            
+            Stage window = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            window.setScene(editCustomerScene);
+            window.show();
+            
+//            FXMLLoader loader = new FXMLLoader();
+//            Parent editCustomerView = FXMLLoader.load(getClass().getResource("/FXMLViews/EditCustomerView.fxml"));
+//            Scene editCustomerScene = new Scene(editCustomerView);
+//            
+//            EditCustomerViewController controller = loader.getController();
+//            controller.initEditCustomer(tableView.getSelectionModel().getSelectedItem(),
+//                                        tableView.getSelectionModel().getSelectedIndex());
+//                                        
+//            
+//            Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+//            window.setScene(editCustomerScene);
+//            window.show();  
+            
+        }
+        
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
         try {
             Inventory.allCustomers = CustomerDAO.getAllCustomers();
-            
+
             
             
         } catch (SQLException ex) {
@@ -76,8 +111,7 @@ public class AddEditDeleteCustomerController implements Initializable {
         
         tableView.setItems(Inventory.allCustomers);
         
-//        String sqlStatement = "SELECT customerId, customerName FROM employee_tbl";
-//        Query.makeQuery(sqlStatement);
+
         
     }    
     

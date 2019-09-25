@@ -14,6 +14,6 @@ import javafx.collections.ObservableList;
  */
 public class Inventory {
     public static ObservableList <Customer> allCustomers = FXCollections.observableArrayList();
-    
+    public int customerIndex;
     
 }

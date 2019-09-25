@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="350.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.EditCustomerViewController">
+   <children>
+      <Label layoutX="57.0" layoutY="14.0" text="Edit Customer Information" textFill="#d70909">
+         <font>
+            <Font name="Apple Braille Pinpoint 8 Dot" size="16.0" />
+         </font></Label>
+      <Button fx:id="saveButton" layoutX="363.0" layoutY="288.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="82.0" text="Save" />
+      <Button fx:id="cancelButton" layoutX="474.0" layoutY="288.0" mnemonicParsing="false" onAction="#cancelButtonHandler" prefHeight="27.0" prefWidth="82.0" text="Cancel" />
+      <TextField fx:id="addressField" layoutX="374.0" layoutY="118.0" />
+      <TextField fx:id="nameField" layoutX="68.0" layoutY="118.0" />
+      <TextField fx:id="phoneField" layoutX="217.0" layoutY="196.0" />
+      <Label fx:id="nameLabel" layoutX="130.0" layoutY="91.0" prefHeight="17.0" prefWidth="115.0" text="Name" />
+      <Label fx:id="addressLabel" layoutX="426.0" layoutY="91.0" prefHeight="17.0" prefWidth="115.0" text="Address" />
+      <Label fx:id="phoneLabel" layoutX="269.0" layoutY="175.0" prefHeight="17.0" prefWidth="115.0" text="Phone #" />
+   </children>
+</AnchorPane>

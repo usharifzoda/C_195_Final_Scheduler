@@ -38,5 +38,28 @@ public class CustomerDAO {
         return allCustomers;
   
     }
-    
+ 
+    public static Customer getCustomer(int customerID) throws SQLException {
+        String stmt = "SELECT * FROM customer";
+        Query.makeQuery(stmt);
+        Customer customerResult;
+        ResultSet result = Query.getResult();
+        while(result.next()){
+            int customerid = result.getInt("customerId");
+            String customerName = result.getString("customerName");
+            int addresdId = result.getInt("addressId");
+            int active = result.getInt("active");
+            String createDate = result.getString("createDate");
+            String createdBy = result.getString("createdBy");
+            String lastUpdate = result.getString("lastUpdate");
+            String lastUpdateBy = result.getString("lastUpdateBy");
+            
+            customerResult = new Customer(customerid, customerName, createdBy, createDate, createdBy, lastUpdate, lastUpdateBy, true);
+
+            return customerResult;
+        
+         }
+        return null;
+    }
+
 }
