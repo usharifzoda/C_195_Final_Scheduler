@@ -7,10 +7,12 @@ package final_scheduler;
 
 
 import Classes.Customer;
-import Databases.Query;
+import Databases.DBConnection;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -85,10 +87,35 @@ public class EditCustomerViewController implements Initializable {
         
     }
     
-    public void saveButtonHandler (ActionEvent e) throws IOException{
+    public void saveButtonHandler (ActionEvent e) throws IOException, SQLException{
         System.out.println("Save button is clicked...");
         
-        String stmt = "update customer.customerName set customerName, ";
+        String stmtCountry = "update customer.customerName set customerName, ";
+        
+        // Check if Country Exists
+        if(countryExists(countryField.getText())){
+            System.out.println("Country name exists " + countryField.getText());
+        }
+        else{
+            System.out.println("Country does not exist...." + countryField.getText());  
+            System.out.println("Adding new country...");
+            
+            //
+          String insertNewCountry =  "INSERT INTO country VALUES " +  
+            "(1,'US','2019-01-01 00:00:00','test','2019-01-01 00:00:00','test')";
+            
+            
+            
+        } 
+        
+        // Check City exists 
+        if(cityExists(cityField.getText())){
+            System.out.println("City name exists " + cityField.getText());
+        }else {
+            System.out.println("City does not Exists " + cityField.getText());
+        }
+        
+        
         
     }
     
@@ -99,13 +126,48 @@ public class EditCustomerViewController implements Initializable {
     }    
     
     
-//    public boolean countryExists(String countryName){
-//        
-//        String stmt = "select * from country where country ='"+countryName+"'";
-//        
-//        Query.makeQuery(stmt);
-//        
-//        
-//    }
+    public boolean countryExists(String countryName) throws SQLException{
+        
+        String stmt = "select * from country where country ='"+countryName+"'";
+        
+        Statement s = DBConnection.conn.createStatement();
+        ResultSet result = s.executeQuery(stmt);
+        
+        if(result.next() == false){
+            return false;
+        }
+        else
+            return true;
+          
+    }
     
+    public boolean cityExists(String cityName) throws SQLException{
+        
+        String stmt = "select * from city where city ='"+cityName+"'";
+        
+        Statement s = DBConnection.conn.createStatement();
+        ResultSet result = s.executeQuery(stmt);
+        
+        if(result.next() == false){
+            return false;
+        }
+        else
+            return true;      
+    }
+    
+        
+    public boolean addressExists(String addressName) throws SQLException{
+        
+        String stmt = "select * from city where city ='"+addressName+"'";
+        
+        Statement s = DBConnection.conn.createStatement();
+        ResultSet result = s.executeQuery(stmt);
+        
+        if(result.next() == false){
+            return false;
+        }
+        else
+            return true;      
+    }
+        
 }
