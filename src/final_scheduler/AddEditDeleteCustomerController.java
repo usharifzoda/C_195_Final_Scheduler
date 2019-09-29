@@ -36,6 +36,11 @@ public class AddEditDeleteCustomerController implements Initializable {
     @FXML TableView<Customer> tableView;
     @FXML TableColumn<Customer, String> customerId;
     @FXML TableColumn<Customer, String> customerName;
+    @FXML TableColumn<Customer, String> customerAddress;
+    @FXML TableColumn<Customer, String> customerPhone;
+    @FXML TableColumn<Customer, String> customerCity;
+    @FXML TableColumn<Customer, String> customerCountry;
+    @FXML TableColumn<Customer, String> customerZipCode;
     
 
     @FXML private Button addCustomerButton;
@@ -98,8 +103,8 @@ public class AddEditDeleteCustomerController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         
         try {
-            Inventory.allCustomers = CustomerDAO.getAllCustomers();
-
+//            Inventory.allCustomers = CustomerDAO.getAllCustomers();
+              Inventory.allCustomers = CustomerDAO.getAllCustomerInformation();
             
             
         } catch (SQLException ex) {
@@ -108,6 +113,11 @@ public class AddEditDeleteCustomerController implements Initializable {
         
         customerId.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerId"));
         customerName.setCellValueFactory(new PropertyValueFactory<Customer, String>("customerName"));
+        customerAddress.setCellValueFactory(new PropertyValueFactory<Customer, String>("Address"));
+        customerPhone.setCellValueFactory(new PropertyValueFactory<Customer, String>("Phone"));
+//        customerCity.setCellValueFactory(new PropertyValueFactory<Customer, String>("City"));
+//        customerZipCode.setCellValueFactory(new PropertyValueFactory<Customer, String>("Zip"));
+//        customerCountry.setCellValueFactory(new PropertyValueFactory<Customer, String>("Country"));
         
         tableView.setItems(Inventory.allCustomers);
         

@@ -25,7 +25,7 @@ public class Query {
             // Determine Query Execution whether it is a SELECT or UPDATE
             if(query.toLowerCase().startsWith("select")){
                 result = stmt.executeQuery(query);
-            }if(query.toLowerCase().startsWith("delete") || query.toLowerCase().startsWith("insert")){
+            }if(query.toLowerCase().startsWith("delete") || query.toLowerCase().startsWith("insert") || query.toLowerCase().startsWith("update")){
                 stmt.executeUpdate(query);
             }
             

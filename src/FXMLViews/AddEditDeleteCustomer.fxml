@@ -5,17 +5,19 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="569.0" prefWidth="440.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddEditDeleteCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="536.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddEditDeleteCustomerController">
    <children>
-      <TableView fx:id="tableView" layoutX="104.0" layoutY="12.0" prefHeight="440.0" prefWidth="253.0">
+      <TableView fx:id="tableView" layoutX="14.0" layoutY="10.0" prefHeight="435.0" prefWidth="510.0">
         <columns>
-          <TableColumn fx:id="customerId" minWidth="0.0" prefWidth="104.0" text="CustomerID" />
-          <TableColumn fx:id="customerName" prefWidth="148.0" text="CustomerName" />
+          <TableColumn fx:id="customerId" minWidth="0.0" prefWidth="88.0" text="CustomerID" />
+          <TableColumn fx:id="customerName" prefWidth="184.0" text="CustomerName" />
+            <TableColumn fx:id="customerAddress" prefWidth="125.0" text="Address" />
+            <TableColumn fx:id="customerPhone" prefWidth="112.0" text="Phone" />
         </columns>
       </TableView>
-      <Button fx:id="addCustomerButton" layoutX="75.0" layoutY="471.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="76.0" text="Add" />
-      <Button fx:id="editCustomerButton" layoutX="201.0" layoutY="471.0" mnemonicParsing="false" onAction="#editCustomerButtonHandler" prefHeight="27.0" prefWidth="76.0" text="Edit" />
-      <Button fx:id="deleteCustomerButton" layoutX="328.0" layoutY="471.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="76.0" text="Delete" />
-      <Button fx:id="cancelButton" layoutX="342.0" layoutY="528.0" mnemonicParsing="false" onAction="#cancelActionHandler" prefHeight="27.0" prefWidth="76.0" text="Cancel" />
+      <Button fx:id="addCustomerButton" layoutX="249.0" layoutY="458.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="76.0" text="Add" />
+      <Button fx:id="editCustomerButton" layoutX="348.0" layoutY="458.0" mnemonicParsing="false" onAction="#editCustomerButtonHandler" prefHeight="27.0" prefWidth="76.0" text="Edit" />
+      <Button fx:id="deleteCustomerButton" layoutX="448.0" layoutY="458.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="76.0" text="Delete" />
+      <Button fx:id="cancelButton" layoutX="448.0" layoutY="497.0" mnemonicParsing="false" onAction="#cancelActionHandler" prefHeight="27.0" prefWidth="76.0" text="Cancel" />
    </children>
 </AnchorPane>
