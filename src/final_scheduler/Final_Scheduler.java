@@ -40,19 +40,19 @@ public class Final_Scheduler extends Application {
         try {
             
             DBConnection.makeConnection();
-            Statement stmt = (Statement) conn.createStatement();
-            
-            String sqlStatement = "SELECT * FROM employee_tbl";
-            Query.makeQuery(sqlStatement);
-            ResultSet result = Query.getResult();
-            
-            while(result.next()){
-                System.out.print(result.getInt("EmployeeID") + " | ");
-                System.out.print(result.getString("EmployeeName") + " | ");
-                System.out.print(result.getString("Department") + " | ");
-                System.out.print(result.getDate("HireDate") + " ");
-                System.out.println(result.getTime("HireDate") + "\n");
-            }
+//            Statement stmt = (Statement) conn.createStatement();
+//            
+//            String sqlStatement = "SELECT * FROM employee_tbl";
+//            Query.makeQuery(sqlStatement);
+//            ResultSet result = Query.getResult();
+//            
+//            while(result.next()){
+//                System.out.print(result.getInt("EmployeeID") + " | ");
+//                System.out.print(result.getString("EmployeeName") + " | ");
+//                System.out.print(result.getString("Department") + " | ");
+//                System.out.print(result.getDate("HireDate") + " ");
+//                System.out.println(result.getTime("HireDate") + "\n");
+//            }
             
             launch(args);
             DBConnection.closeConnection();

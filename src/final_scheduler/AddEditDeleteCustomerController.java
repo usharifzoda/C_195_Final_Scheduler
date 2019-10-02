@@ -33,6 +33,8 @@ import javafx.stage.Stage;
 
 public class AddEditDeleteCustomerController implements Initializable {
     
+    private Customer selectedCustomer;
+    
     @FXML TableView<Customer> tableView;
     @FXML TableColumn<Customer, String> customerId;
     @FXML TableColumn<Customer, String> customerName;
@@ -82,20 +84,22 @@ public class AddEditDeleteCustomerController implements Initializable {
             window.setScene(editCustomerScene);
             window.show();
             
-//            FXMLLoader loader = new FXMLLoader();
-//            Parent editCustomerView = FXMLLoader.load(getClass().getResource("/FXMLViews/EditCustomerView.fxml"));
-//            Scene editCustomerScene = new Scene(editCustomerView);
-//            
-//            EditCustomerViewController controller = loader.getController();
-//            controller.initEditCustomer(tableView.getSelectionModel().getSelectedItem(),
-//                                        tableView.getSelectionModel().getSelectedIndex());
-//                                        
-//            
-//            Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
-//            window.setScene(editCustomerScene);
-//            window.show();  
-            
         }
+        
+    }
+    
+    public void deleteCustomerButtonHandler(ActionEvent e) throws SQLException {
+        System.out.println("Delete Button has been pressed...");
+        
+        if(tableView.getSelectionModel().getSelectedItem() == null){
+            System.out.println("Please select a customer to Delete...");
+            
+        }else {
+            
+            System.out.println("Deleting selected customer... " + tableView.getSelectionModel().toString());         
+            
+        } 
+        
         
     }
     
@@ -105,7 +109,7 @@ public class AddEditDeleteCustomerController implements Initializable {
         try {
 //            Inventory.allCustomers = CustomerDAO.getAllCustomers();
               Inventory.allCustomers = CustomerDAO.getAllCustomerInformation();
-            
+              
             
         } catch (SQLException ex) {
             Logger.getLogger(AddEditDeleteCustomerController.class.getName()).log(Level.SEVERE, null, ex);
