@@ -8,12 +8,15 @@ package final_scheduler;
 import Classes.Customer;
 import Classes.Inventory;
 import Databases.CustomerDAO;
+import Databases.Query;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +24,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -88,18 +93,53 @@ public class AddEditDeleteCustomerController implements Initializable {
         
     }
     
-    public void deleteCustomerButtonHandler(ActionEvent e) throws SQLException {
+    // Method to delete the Customer from the table View
+    public void deleteCustomerButtonHandler(ActionEvent e) throws SQLException, IOException {
         System.out.println("Delete Button has been pressed...");
         
         if(tableView.getSelectionModel().getSelectedItem() == null){
             System.out.println("Please select a customer to Delete...");
             
         }else {
+            boolean answer = confirmDelete();
             
-            System.out.println("Deleting selected customer... " + tableView.getSelectionModel().toString());         
+            if(answer){
+                ObservableList<Customer> allCustomers;
+                allCustomers = tableView.getItems();
+                selectedCustomer = tableView.getSelectionModel().getSelectedItem();
+                
+                System.out.println("Customer to be Deleted: " + selectedCustomer.getCustomerName() + " " + selectedCustomer.getCustomerId());
+                int deleteId = selectedCustomer.getCustomerId();
+                String stmt = "delete from customer where customerId =" + deleteId;
+                
+                Query.makeQuery(stmt);
+                
+                // Load the tableView again after Query to make refresh
+                Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/AddEditDeleteCustomer.fxml"));
+                Scene mainViewScene = new Scene(mainViewParent);
+        
+                Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+                window.setScene(mainViewScene);
+                window.show(); 
+                
+                
+            }
+            
             
         } 
         
+    }
+    
+    public void addCustomerButtonHandler(ActionEvent e) throws SQLException, IOException {
+            
+        System.out.println("Add Customer Button Pressed. Going to Add Customer View");
+        
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/addCustomer.fxml"));
+        Scene mainViewScene = new Scene(mainViewParent);
+            
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+        window.setScene(mainViewScene);
+        window.show();
         
     }
     
@@ -127,6 +167,21 @@ public class AddEditDeleteCustomerController implements Initializable {
         
 
         
+    }
+
+    // Confirm Delete Dialog Popup
+    public static boolean confirmDelete(){
+        boolean deleteAnswer = true;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete");
+        alert.setHeaderText("Are you sure you want to DELETE?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == ButtonType.OK){
+            return deleteAnswer;
+        }
+
+    return false;
     }    
+
     
 }

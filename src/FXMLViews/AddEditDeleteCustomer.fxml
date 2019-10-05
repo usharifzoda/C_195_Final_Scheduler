@@ -15,7 +15,7 @@
             <TableColumn fx:id="customerPhone" prefWidth="112.0" text="Phone" />
         </columns>
       </TableView>
-      <Button fx:id="addCustomerButton" layoutX="249.0" layoutY="458.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="76.0" text="Add" />
+      <Button fx:id="addCustomerButton" layoutX="249.0" layoutY="458.0" mnemonicParsing="false" onAction="#addCustomerButtonHandler" prefHeight="27.0" prefWidth="76.0" text="Add" />
       <Button fx:id="editCustomerButton" layoutX="348.0" layoutY="458.0" mnemonicParsing="false" onAction="#editCustomerButtonHandler" prefHeight="27.0" prefWidth="76.0" text="Edit" />
       <Button fx:id="deleteCustomerButton" layoutX="448.0" layoutY="458.0" mnemonicParsing="false" onAction="#deleteCustomerButtonHandler" prefHeight="27.0" prefWidth="76.0" text="Delete" />
       <Button fx:id="cancelButton" layoutX="448.0" layoutY="497.0" mnemonicParsing="false" onAction="#cancelActionHandler" prefHeight="27.0" prefWidth="76.0" text="Cancel" />
