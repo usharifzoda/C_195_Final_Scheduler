@@ -6,8 +6,10 @@
 package final_scheduler;
 
 import Databases.DBConnection;
+import Databases.Query;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -72,162 +74,235 @@ public class AddCustomerController implements Initializable {
         are valid or not in second IF block we are checking this,
         
         */
-        if(customerName.getText().isEmpty()|| customerPhone.getText().isEmpty()||customerAddress.getText().isEmpty()||customerCity.getText().isEmpty()||customerZipCode.getText().isEmpty()||customerCountry.getText().isEmpty())
-        {
-            errorLabel.setText("Empty Field not allowed");
+        
+        
+        boolean countryExist = false;
+        boolean cityExists = false;
+        
+        String queryCountry = "Select * from country where country = '" + customerCountry.getText() + "'";
+        System.out.println(customerCountry.getText());
+
+        if (customerCountry.getText().isEmpty() || !isAlphabet(customerCountry.getText().trim())) {
+            errorLabel.setText("Inccorect Value in Country field. Should be Alphabetic and not empty");
+        } else {
+
+            try {
+
+                Query.makeQuery(queryCountry);
+                ResultSet result = Query.getResult();
+
+                if (result.next()) {
+                    countryExist = true;
+                    System.out.println("Country Exists in the Table " + customerCountry.getText());
+                } else {
+                    System.out.println("Country Does not exist: " + customerCountry.getText() + " Adding it to the 'country' table");
+                    String insertCountry = "INSERT INTO country (country, createDate, createdBy, lastupdateBy) VALUES ('" + customerCountry.getText() + "',CURDATE(),CURRENT_USER(),CURRENT_USER())";
+                    Query.makeQuery(insertCountry);
+                }
+
+            } catch (Exception e) {
+                e.getMessage();
+            }
+
         }
-        else
-        {
-            if(isAlphabet(customerName.getText().toString().trim())&&isAlphabet(customerCity.getText().toString().trim())&&isAlphabet(customerCountry.getText().toString().trim())&&isNumber(customerZipCode.getText().toString().trim())&&isNumber(customerPhone.getText().toString().trim()))  
-            {
-                //now here we will add values to db, but first we will check wwether country name already exit or not if not exist we will add 
-                //country name than we will check city name exist or not if not exist we will add city , similiarly we will check address too
-                
-                boolean countryFlag=false;
-                boolean cityFlag=false;
-                int cid=-1;
-                Statement s=DBConnection.conn.createStatement();
-                //will check wether country name exist or not
-                String stmt = "select * from country where country='"+customerCountry.getText()+"'";
-                try
-                {
-                    
-                    ResultSet r=s.executeQuery(stmt);
-                    while(r.next())
-                        countryFlag=true;
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-        
-                //will check wether city name exist or not
-               stmt = "select * from city where city='"+customerCity.getText()+"'";
-               
-               try
-               {
-                    s=DBConnection.conn.createStatement();
-                    ResultSet res=s.executeQuery(stmt);
-                    while(res.next())
-                        cityFlag=true;
-                    //  if country name doesnot exit i will insert 
-               }
-               catch(Exception e)
-               {
-                   e.printStackTrace();
-               }
-                if(countryFlag==false)
-                {
-                    System.out.println("Inside insert into Country");
-                    stmt="insert into country values (null,'"+customerCountry.getText()+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
-                    s.executeUpdate(stmt);
-                    System.out.println("Left insert Country");
-
-                }
-                
-               
-                boolean cityChanged=false;
-
-                // if cityname doesnot exist we will insert it in if section, if cityname already exist
-                // we will update the country id, for both choices we need country id, so first we will get 
-                //countryig 
 
 
-                //we will feteh country id because we can only insert country id in city table
-                try{
-                    ResultSet countryID=s.executeQuery("select countryid from country where country='"+customerCountry.getText()+"'");
-
-                    while(countryID.next())
-                    {    
-                        cid=countryID.getInt("countryid");
-                        break;
-                    }
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-                 // we will make decision , we will update or insert new record 
-                 if(cityFlag==false)
-                 {
-                     /// inserting city record in city table
-                     try
-                     {
-                        System.out.println("Inside Insert into City 156");
-                        stmt="insert into city values (null,'"+customerCity.getText()+"',"+cid+",CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
-                        s.executeUpdate(stmt);
-                        System.out.println("Left insert into the City - 158");
-                     }
-                     catch(Exception e)
-                     {
-                         e.printStackTrace();
-                     }
-
-                 }
-                 else
-                 {
-                     //updating city record 
-                     
-                     try
-                     {
-                         //'"+cityField.getText()+"'
-                        stmt="update city set countryid="+cid+" where city='"+customerCity.getText()+"'";
-                         s.executeUpdate(stmt);
-                     }
-                     catch(Exception e)
-                     {
-                         e.printStackTrace();
-                     }
-                     
-                 }
-                
-                 
-                 int cityID=-1;
-                 
-                try
-                {
-                   stmt="select cityid from city where where city='"+customerCity.getText()+"'";
-                   ResultSet cityResult=s.executeQuery(stmt);
-                   while (cityResult.next())
-                   {
-                       cityID=cityResult.getInt(0);
-                   }
-                }
-                catch(Exception e)
-                {
-                   e.printStackTrace();
-                }
-                 
-                        //add address than custoer
-                
-                   // update address record
-                   // first we need city id to update address record
-                   
-                   
-                try
-                {
-                   stmt="insert into address values( null,'"+customerAddress.getText().toString()+"',null,"+cityID+",'"+customerZipCode.getText().toString()+"','"+customerPhone.getText().toString()+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
-                   s.executeUpdate(stmt);
-                   
-                }
-                catch(Exception e)
-                {
-                   e.printStackTrace();
-                }
-                        
-                 
-            }        
-            else
-                errorLabel.setText("Invalid Values");
-        }
         
         
-        
-        
-        
-    }
+//        
+//        if(customerName.getText().isEmpty()|| customerPhone.getText().isEmpty()||customerAddress.getText().isEmpty()||customerCity.getText().isEmpty()||customerZipCode.getText().isEmpty()||customerCountry.getText().isEmpty())
+//        {
+//            errorLabel.setText("Empty Field not allowed");
+//        }
+//        else
+//        {
+//            if(isAlphabet(customerName.getText().toString().trim())&&isAlphabet(customerCity.getText().toString().trim())&&isAlphabet(customerCountry.getText().toString().trim())&&isNumber(customerZipCode.getText().toString().trim())&&isNumber(customerPhone.getText().toString().trim()))  
+//            {
+//                //now here we will add values to db, but first we will check wwether country name already exit or not if not exist we will add 
+//                //country name than we will check city name exist or not if not exist we will add city , similiarly we will check address too
+//                
+//                boolean countryFlag=false;
+//                boolean cityFlag=false;
+//                int cid=-1;
+//                Statement s=DBConnection.conn.createStatement();
+//                //will check wether country name exist or not
+//                String stmt = "select * from country where country='"+customerCountry.getText()+"'";
+//                try
+//                {
+//                    
+//                    ResultSet r=s.executeQuery(stmt);
+//                    while(r.next())
+//                        countryFlag=true;
+//                }
+//                catch(Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
+//        
+//                //will check wether city name exist or not
+//               stmt = "select * from city where city='"+customerCity.getText()+"'";
+//               
+//               try
+//               {
+//                    s=DBConnection.conn.createStatement();
+//                    ResultSet res=s.executeQuery(stmt);
+//                    while(res.next())
+//                        cityFlag=true;
+//                    //  if country name doesnot exit i will insert 
+//               }
+//               catch(Exception e)
+//               {
+//                   e.printStackTrace();
+//               }
+//                if(countryFlag==false)
+//                {
+//                    System.out.println("Inside insert into Country");
+//                    stmt="insert into country values (null,'"+customerCountry.getText()+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
+//                    s.executeUpdate(stmt);
+//                    System.out.println("Left insert Country");
+//
+//                }
+//                
+//               
+//                boolean cityChanged=false;
+//
+//                // if cityname doesnot exist we will insert it in if section, if cityname already exist
+//                // we will update the country id, for both choices we need country id, so first we will get 
+//                //countryig 
+//
+//
+//                //we will feteh country id because we can only insert country id in city table
+//                try{
+//                    ResultSet countryID=s.executeQuery("select countryid from country where country='"+customerCountry.getText()+"'");
+//
+//                    while(countryID.next())
+//                    {    
+//                        cid=countryID.getInt("countryid");
+//                        break;
+//                    }
+//                }catch(Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
+//                 // we will make decision , we will update or insert new record 
+//                 if(cityFlag==false)
+//                 {
+//                     /// inserting city record in city table
+//                     try
+//                     {
+//                        System.out.println("Inside Insert into City 156");
+//                        stmt="insert into city values (null,'"+customerCity.getText()+"',"+cid+",CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
+//                        s.executeUpdate(stmt);
+//                        System.out.println("Left insert into the City - 158");
+//                     }
+//                     catch(Exception e)
+//                     {
+//                         e.printStackTrace();
+//                     }
+//
+//                 }
+//                 else
+//                 {
+//                     //updating city record 
+//                     
+//                     try
+//                     {
+//                         //'"+cityField.getText()+"'
+//                        stmt="update city set countryid="+cid+" where city='"+customerCity.getText()+"'";
+//                         s.executeUpdate(stmt);
+//                     }
+//                     catch(Exception e)
+//                     {
+//                         e.printStackTrace();
+//                     }
+//                     
+//                 }
+//                
+//                 
+//                 int cityID=-1;
+//                 
+//                try
+//                {
+//                   stmt="select cityid from city where where city='"+customerCity.getText()+"'";
+//                   ResultSet cityResult=s.executeQuery(stmt);
+//                   while (cityResult.next())
+//                   {
+//                       cityID=cityResult.getInt(0);
+//                   }
+//                }
+//                catch(Exception e)
+//                {
+//                   e.printStackTrace();
+//                }
+//                 
+//                        //add address than custoer
+//                
+//                   // update address record
+//                   // first we need city id to update address record
+//                   
+//                   
+//                try
+//                {
+//                   stmt="insert into address values( null,'"+customerAddress.getText().toString()+"',null,"+cityID+",'"+customerZipCode.getText().toString()+"','"+customerPhone.getText().toString()+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
+//                   s.executeUpdate(stmt);
+//                   
+//                }
+//                catch(Exception e)
+//                {
+//                   e.printStackTrace();
+//                }
+//                
+//        
+//                 
+//            }        
+//            else
+//                errorLabel.setText("Invalid Values");
+//        }
+//        
+//        
+//        
+//        
+//        
+//    }
+//    
+//
+//    boolean isAlphabet(String s)
+//    {
+//        for (int i=0;i<s.length();i++)
+//        {
+//            
+//            if((s.charAt(i)>='A'&& s.charAt(i)<='Z')||(s.charAt(i)>='a'&& s.charAt(i)<='z'))
+//            {
+//                continue;
+//            }
+//            else return false;
+//        }
+//        return  true;
+//    }
+//    
+//    
+//       boolean isNumber(String s)
+//    {
+//        for (int i=0;i<s.length();i++)
+//        {
+//            
+//            if((s.charAt(i)>='0'&& s.charAt(i)<='9') || s.charAt(i) == '-')
+//            {
+//                continue;
+//            }
+//            else return false;
+//        }
+//        return  true;
+//    }
+//    
+    
+    // Going back to the Add Edit Delete Customer View   
     
 
-    boolean isAlphabet(String s)
+    }
+    
+    // Check if value is in Alphabetical Order
+        public boolean isAlphabet(String s)
     {
         for (int i=0;i<s.length();i++)
         {
@@ -241,23 +316,6 @@ public class AddCustomerController implements Initializable {
         return  true;
     }
     
-    
-       boolean isNumber(String s)
-    {
-        for (int i=0;i<s.length();i++)
-        {
-            
-            if((s.charAt(i)>='0'&& s.charAt(i)<='9') || s.charAt(i) == '-')
-            {
-                continue;
-            }
-            else return false;
-        }
-        return  true;
-    }
-    
-    
-    // Going back to the Add Edit Delete Customer View   
     
     public void cancel(ActionEvent e) throws IOException 
     {

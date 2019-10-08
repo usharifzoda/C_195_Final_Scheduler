@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="619.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="619.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddCustomerController">
    <children>
       <Label layoutX="216.0" layoutY="27.0" text="Add Customer">
          <font>
@@ -30,6 +29,6 @@
       <Label layoutX="131.0" layoutY="436.0" text="Country" />
       <Button layoutX="194.0" layoutY="516.0" mnemonicParsing="false" onAction="#save" prefHeight="30.0" prefWidth="100.0" text="Save" />
       <Button layoutX="306.0" layoutY="516.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel" />
-      <Label fx:id="errorLabel" layoutX="206.0" layoutY="486.0" prefHeight="17.0" prefWidth="200.0" />
+      <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="486.0" prefHeight="17.0" prefWidth="573.0" />
    </children>
 </AnchorPane>
