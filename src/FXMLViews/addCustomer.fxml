@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="619.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="682.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AddCustomerController">
    <children>
       <Label layoutX="216.0" layoutY="27.0" text="Add Customer">
          <font>
@@ -21,14 +21,21 @@
       <Label layoutX="131.0" layoutY="187.0" text="Customer Phone " />
       <Label layoutX="131.0" layoutY="247.0" text="Address" />
       <TextField fx:id="customerAddress" layoutX="239.0" layoutY="243.0" prefHeight="30.0" prefWidth="200.0" />
-      <TextField fx:id="customerCity" layoutX="239.0" layoutY="302.0" prefHeight="30.0" prefWidth="200.0" />
-      <Label layoutX="131.0" layoutY="306.0" text="City" />
-      <TextField fx:id="customerZipCode" layoutX="239.0" layoutY="366.0" prefHeight="30.0" prefWidth="200.0" />
-      <Label layoutX="131.0" layoutY="370.0" text="Zip Code" />
-      <TextField fx:id="customerCountry" layoutX="239.0" layoutY="432.0" prefHeight="30.0" prefWidth="200.0" />
-      <Label layoutX="131.0" layoutY="436.0" text="Country" />
-      <Button layoutX="194.0" layoutY="516.0" mnemonicParsing="false" onAction="#save" prefHeight="30.0" prefWidth="100.0" text="Save" />
-      <Button layoutX="306.0" layoutY="516.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel" />
-      <Label fx:id="errorLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="486.0" prefHeight="17.0" prefWidth="573.0" />
+      <TextField fx:id="customerCity" layoutX="239.0" layoutY="352.0" prefHeight="30.0" prefWidth="200.0" />
+      <Label layoutX="131.0" layoutY="356.0" text="City" />
+      <TextField fx:id="customerZipCode" layoutX="239.0" layoutY="416.0" prefHeight="30.0" prefWidth="200.0" />
+      <Label layoutX="131.0" layoutY="420.0" text="Zip Code" />
+      <TextField fx:id="customerCountry" layoutX="239.0" layoutY="482.0" prefHeight="30.0" prefWidth="200.0" />
+      <Label layoutX="131.0" layoutY="486.0" text="Country" />
+      <Button layoutX="194.0" layoutY="566.0" mnemonicParsing="false" onAction="#save" prefHeight="30.0" prefWidth="100.0" text="Save" />
+      <Button layoutX="306.0" layoutY="566.0" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel" />
+      <Label fx:id="errorCustomerCountry" layoutX="239.0" layoutY="526.0" prefHeight="17.0" prefWidth="290.0" />
+      <Label fx:id="errorCustomerName" layoutX="239.0" layoutY="157.0" prefHeight="17.0" prefWidth="290.0" />
+      <Label fx:id="errorCustomerPhone" layoutX="239.0" layoutY="213.0" prefHeight="17.0" prefWidth="290.0" />
+      <Label fx:id="errorCustomerAddress" layoutX="239.0" layoutY="273.0" prefHeight="17.0" prefWidth="290.0" />
+      <Label fx:id="errorCustomerCity" layoutX="239.0" layoutY="382.0" prefHeight="17.0" prefWidth="290.0" />
+      <Label fx:id="errorCustomerZipCode" layoutX="239.0" layoutY="452.0" prefHeight="17.0" prefWidth="290.0" />
+      <TextField fx:id="customerAddress2" layoutX="239.0" layoutY="300.0" prefHeight="30.0" prefWidth="200.0" />
+      <Label layoutX="131.0" layoutY="304.0" text="Address 2" />
    </children>
 </AnchorPane>
