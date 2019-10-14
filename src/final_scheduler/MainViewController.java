@@ -42,12 +42,26 @@ public class MainViewController implements Initializable {
         
     }
     
-    public void addEditDeleteAppointmentButtonPressed(ActionEvent event){
+    public void addEditDeleteAppointmentButtonPressed(ActionEvent event) throws IOException{
         System.out.println("Add Appt button Pressed");
+        
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/appointmentDashboard.fxml"));
+        Scene mainViewScene = new Scene(mainViewParent);
+        
+        Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        window.setScene(mainViewScene);
+        window.show(); 
     }
     
-    public void viewAppointmentsCalendarButtonPressed(ActionEvent event){
+    public void viewAppointmentsCalendarButtonPressed(ActionEvent event) throws IOException{
         System.out.println("View Appts Pressed");
+        
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/calendar.fxml"));
+        Scene mainViewScene = new Scene(mainViewParent);
+        
+        Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        window.setScene(mainViewScene);
+        window.show(); 
     }
     
     public void generateReportButtonPressed(ActionEvent event){
