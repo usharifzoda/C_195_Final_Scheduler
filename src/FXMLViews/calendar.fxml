@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="675.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.CalendarController">
+   <children>
+      <ComboBox fx:id="yearComboBox" layoutX="72.0" layoutY="42.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Year" />
+      <RadioButton fx:id="byMonth" layoutX="324.0" layoutY="49.0" mnemonicParsing="false" selected="true" text="By Month">
+         <toggleGroup>
+            <ToggleGroup fx:id="calendarViewGroup" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="byWeek" layoutX="428.0" layoutY="49.0" mnemonicParsing="false" text="By Week" toggleGroup="$calendarViewGroup" />
+      <Line endX="625.0" layoutX="101.0" layoutY="92.0" startX="-100.0" />
+      <Pane fx:id="calendarPane" layoutX="1.0" layoutY="96.0" prefHeight="578.0" prefWidth="800.0">
+         <children>
+            <GridPane fx:id="calendarGrid" layoutX="141.0" layoutY="45.0" prefHeight="468.0" prefWidth="518.0" style="-fx-border-color: black;">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="25.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="85.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <padding>
+                  <Insets bottom="2.5" left="2.5" right="2.5" top="5.0" />
+               </padding>
+            </GridPane>
+            <Button fx:id="prebtn" layoutX="29.0" layoutY="233.0" mnemonicParsing="false" onAction="#previous" prefHeight="112.0" prefWidth="84.0" text="Previous" />
+            <Button fx:id="nextBtn" layoutX="686.0" layoutY="233.0" mnemonicParsing="false" onAction="#next" prefHeight="112.0" prefWidth="84.0" text="Next" />
+            <Label fx:id="titleLabel" layoutX="283.0" layoutY="21.0" prefHeight="25.0" prefWidth="176.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Button layoutX="589.0" layoutY="45.0" mnemonicParsing="false" onAction="#search" text="Search" />
+   </children>
+</AnchorPane>
