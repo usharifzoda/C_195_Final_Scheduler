@@ -7,20 +7,28 @@ package final_scheduler;
 
 
 import Databases.DBConnection;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.Node;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -32,6 +40,7 @@ public class CalendarController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    int M;
     
     @FXML
     private GridPane calendarGrid;
@@ -65,9 +74,17 @@ public class CalendarController implements Initializable {
     private Button nextBtn;
     @FXML
     private Button prebtn;
+    @FXML
+    private ComboBox selectMonth;
+    
+    
     Statement s;
+    
+    
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb) 
+    {
+        selectMonth.setVisible(false);
         days=new String[20];
         days[0]="Sun";
         days[1]="Mon";
@@ -96,8 +113,15 @@ public class CalendarController implements Initializable {
         months[10]="November";
         months[11]="December";
         prebtn.setDisable(true);
+        
+        selectMonth.getItems().addAll("January","February","March","April","May","June","July","August","September","October","November","December");
+        
+    
     }    
     
+    
+  
+  
     @FXML
     public void search()
     {
@@ -108,19 +132,23 @@ public class CalendarController implements Initializable {
             String view = selectedRadioButton.getText();
             
             YEAR=Integer.parseInt(selectedYear);
-            month=1;
+            
             nextBtn.setDisable(false);
             
             
             if(view.contains("By Month"))
             {
+                month=1;
+                M=month;
+                selectMonth.setVisible(false);
                 calendarType="By Month";
                 displayCalendar();
             }
             else if(view.contains("By Week"))
             {
+                selectMonth.setVisible(true);
                 calendarType="By Week";
-                displayByWeek();
+               // displayBox();
             }
             
         }
@@ -152,11 +180,11 @@ public class CalendarController implements Initializable {
 	if (l <= 6)
             firstDay = l;
     }
-    
+    @FXML
     public void displayCalendar()
     {
         
-         int [] reservedDays=new int[31];
+        int [] reservedDays=new int[31];
         int count=0;
         String m;
         if(month<10)
@@ -189,10 +217,15 @@ public class CalendarController implements Initializable {
         firstDay=-1;
         int td=calculateDays(YEAR);
         int mdays=0;
+        
+        
         for(int i=1;i<month;i++)
         {
             mdays+=calculateDaysInMonth(i);
         }
+        //getFirstDay(td+mdays);
+        System.out.println(td+mdays);
+        totalDays=0;
         getFirstDay(td+mdays);
         
         calendarGrid.getChildren().clear();
@@ -209,6 +242,7 @@ public class CalendarController implements Initializable {
         int row=1;
         int col=0;
         int counter=0;
+        System.out.println(firstDay);
         for (int i = 0; i < firstDay; i++) {
             calendarGrid.add(new Label (" "), col, row);
             counter+=1;
@@ -219,13 +253,24 @@ public class CalendarController implements Initializable {
         {
             Button d=new Button(Integer.toString(i));
             d.setMinSize(50, 50);
-            //d.setDisable(true);
+           
+
             for(int k=0;k<reservedDays.length;k++)
             {
                 if(reservedDays[k]==i)
                 {
                     d.setStyle("-fx-background-color:green");
-                    //d.setDisable(false);
+                    
+                    d.setOnAction(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent event) 
+                        {
+                            
+                            DisplayAppointments(event);
+                        }
+                    });
+                   
                 }
             }
             calendarGrid.add(d, col, row);
@@ -286,8 +331,8 @@ public class CalendarController implements Initializable {
     public void next()
     {
         if(calendarType.contains("By Month"))
-        {  month++;
-
+        {   month++;
+            M=month;
             displayCalendar();
             if(month>=2)
                 prebtn.setDisable(false);
@@ -300,8 +345,12 @@ public class CalendarController implements Initializable {
         }
         else if(calendarType.contains("By Week"))
         {
-            System.out.println("inside");
-            displayByWeek();
+            curWeek=curWeek+1;
+            if(curWeek==2)
+                prebtn.setDisable(false);
+            
+            displayWeek(1,0,0,LastDate+1);
+           
         }
     }
     
@@ -311,7 +360,7 @@ public class CalendarController implements Initializable {
         if(calendarType.contains("By Month"))
         {
             month--;
-       
+            M=month;
             displayCalendar();
             if(month>=2)
                 prebtn.setDisable(false);
@@ -325,23 +374,86 @@ public class CalendarController implements Initializable {
         }
         else if(calendarType.contains("By Week"))
         {
-            
+            curWeek-=1;
+            displayWeek(1,0,0,LastDate-13);
         }
     }
     
-    
+    @FXML
+    public void displayBox()
+    {
+        titleLabel.setText(" ");
+        displayByWeek();
+    }
     //by week
-    int lastDate;
-    String lastDay;
-    int weekMonth;
-    boolean flag=false;
+    int LastDate;
+    int curWeek=1;
+    
     
     public void displayByWeek()
     {
-        int [] reservedDays=new int[31];
-        int count=0;
+        curWeek=1;
+        totalDays=0;
+        int td=calculateDays(YEAR);
+        int mdays=0;
+        int index=selectMonth.getSelectionModel().getSelectedIndex();
+        for(int i=1;i<index+1;i++)
+        {
+            mdays+=calculateDaysInMonth(i);
+        }
+        System.out.println(index+1);
+        System.out.println(td+mdays);
+        getFirstDay(td+mdays);
         
-        String yearMonth=yearComboBox.getSelectionModel().getSelectedItem().toString()+"-"+month;
+        int row=1;
+        int col=0;
+        int counter=0;
+        System.out.println(firstDay);
+        for (int i = 0; i < firstDay; i++) {
+            calendarGrid.add(new Label (" "), col, row);
+            counter+=1;
+            col++; 
+            if (counter==7)
+            {
+                col=0;
+                row+=1;
+                counter=0;
+            }
+        }
+        displayWeek(row,col,counter,1);
+       
+        
+        
+    }
+    @FXML
+    public void clearCalendar()
+    {
+        titleLabel.setText(" ");
+        month=1;
+        selectMonth.getSelectionModel().clearSelection();
+        selectMonth.setVisible(false);
+        calendarGrid.getChildren().clear();
+        titleLabel.setText(" ");
+        nextBtn.setDisable(true);
+        prebtn.setDisable(true);
+        if(byMonth.isSelected())
+            byMonth.setSelected(false);
+        if(byWeek.isSelected())
+            byWeek.setSelected(false);
+        
+    }
+    public void displayWeek(int row,int col, int counter,int count)
+    {
+        int [] reservedDays=new int[31];
+        int c=0;
+        String m;
+        int month=selectMonth.getSelectionModel().getSelectedIndex()+1;
+        if(month<10)
+            m="0"+Integer.toString(month);
+        else 
+            m=Integer.toString(month);
+        String yearMonth=yearComboBox.getSelectionModel().getSelectedItem().toString()+"-"+m+"-";
+        
         try
         {
             s=DBConnection.conn.createStatement();
@@ -353,26 +465,13 @@ public class CalendarController implements Initializable {
                 String []ResultParts=result.split(" ");
                 String []dateParts=ResultParts[0].split("-");
                 
-                reservedDays[count]=Integer.parseInt(dateParts[2]);
-                count++;
+                reservedDays[c]=Integer.parseInt(dateParts[2]);
+                c++;
             }
         }
         catch(Exception e)
         {
             e.printStackTrace();
-        }
-        if(flag)
-        {
-            totalDays=0;
-            firstDay=-1;
-            int td=calculateDays(YEAR);
-            int mdays=0;
-
-            for(int i=1;i<month;i++)
-            {
-                mdays+=calculateDaysInMonth(i);
-            }
-            getFirstDay(td+mdays);
         }
         calendarGrid.getChildren().clear();
         calendarGrid.add(new Label(days[6]), 0, 0);
@@ -382,37 +481,130 @@ public class CalendarController implements Initializable {
         calendarGrid.add(new Label(days[3]), 4, 0);
         calendarGrid.add(new Label(days[4]), 5, 0);
         calendarGrid.add(new Label(days[5]), 6, 0);
-        int row=1;
-        int col=0;
-        int counter=0;
-        for (int i = 0; i < firstDay; i++) {
-            calendarGrid.add(new Label (" "), col, row);
-            counter+=1;
-            col++; 
-        }
-        
-        //System.out.println(l);
+        int index=selectMonth.getSelectionModel().getSelectedIndex();
+        M=index+1;
+        titleLabel.setText(months[index]+" "+YEAR+"   Week "+curWeek);
+       
+        boolean startWeekEnded=false;
         for (int i = counter; i < 7; i++)
         {
-            Button d=new Button(Integer.toString(i));
-            d.setMinSize(50, 50);
-//            for(int k=0;k<reservedDays.length;k++)
-//            {
-//                if(reservedDays[k]==i)
-//                    d.setStyle("background-color:blue");
-//                    d.setStyle("-fx-background-color=black");
-//                    System.out.println();
-//            }
-            calendarGrid.add(d, col, row);
+            if(count<=0)
+            {
+                Label l=new Label(" ");
+                calendarGrid.add(l, col, row);
+                startWeekEnded=true;
+            }
+            else
+            {
+                Button d=new Button(Integer.toString(count));
+                d.setMinSize(50, 50);
+                System.out.println(count);
+                for(int k=0;k<reservedDays.length;k++)
+                {
+                    if(reservedDays[k]==count)
+                    {
+                        d.setStyle("-fx-background-color:green");
+
+                        d.setOnAction(new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent event) 
+                            {
+                                System.out.println("handler set");
+
+                                DisplayAppointments(event);
+                            }
+                        });
+
+                    }
+                }
+                calendarGrid.add(d, col, row);
+            }
+            
+           
+            
             col+=1;
             counter+=1;
             if (counter==7)
             {
                 col=0;
-                
+                row+=1;
                 counter=0;
             }
-            lastDate=i;
+            
+            count++;
+            if(count>calculateDaysInMonth(selectMonth.getSelectionModel().getSelectedIndex()+1))
+            {
+                nextBtn.setDisable(true);
+                break;
+            }
         }
+        if(startWeekEnded)
+            prebtn.setDisable(true);
+        LastDate=count-1;
+        
+        if(curWeek==2)
+            prebtn.setDisable(false);
+   }
+    public void DisplayAppointments(ActionEvent e)
+    {
+        String day="";
+        
+        String dayName=e.getSource().toString();
+        System.out.println(dayName);
+        for(int i=0;i<dayName.length();i++)
+        {
+            if(dayName.charAt(i)=='\'')
+            {
+                for(int j=i+1;j<dayName.length();j++)
+                {
+                    if(dayName.charAt(j)=='\'')
+                        break;
+                    else
+                        day+=dayName.charAt(j);
+                }
+                break;
+            }
+            else continue;
+        }
+        if(Integer.parseInt(day)<10)
+            day="0"+Integer.parseInt(day);
+        
+            
+        try
+        {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/FXMLViews/calendarAppointmentView.fxml"));
+            Parent calendarAppointmentView = loader.load();
+            
+            Scene editAppointmentScene = new Scene(calendarAppointmentView);
+            CalendarAppointmentViewController controller = loader.getController();
+            
+            controller.initCalendarAppointmentView(YEAR,M, day);
+            
+            Stage window = new Stage();//(Stage) ((Node) e.getSource()).getScene().getWindow();
+            window.setScene(editAppointmentScene);
+            window.showAndWait();
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        
+        
+        
+    }
+    
+    
+    @FXML
+    public void back(ActionEvent event)throws IOException
+    {
+        
+        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/MainView.fxml"));
+        Scene mainViewScene = new Scene(mainViewParent);
+        
+        Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        window.setScene(mainViewScene);
+        window.show(); 
     }
 }    
