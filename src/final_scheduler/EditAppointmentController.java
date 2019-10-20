@@ -193,26 +193,42 @@ public class EditAppointmentController implements Initializable {
                 
                 if(checkTime(editStartTime.getText().toString())&&checkTime(editEndTime.getText().toString()))
                 {
-                    if(checkTimeAvailability())
+                    if(checkTimeHours(editStartTime.getText().toString())&&checkTimeHours(editEndTime.getText().toString())&&checkTimeMin(editStartTime.getText().toString())&&checkTimeMin(editEndTime.getText().toString()))
                     {
-                        System.out.println("already exist in the table");
-                        errorStartTime.setText("time slot not available");
-                        errorEndTime.setText("time slot not available");
+                        if(checkTimeAvailability())
+                        {
+                            System.out.println("already exist in the table");
+                            errorStartTime.setText("time slot not available");
+                            errorEndTime.setText("time slot not available");
+                        }
+                        else
+                        { 
+
+                            try
+                            {
+                                Statement s=DBConnection.conn.createStatement();
+                                String stmt="update appointment set title='"+editTitle.getText()+"', location='"+editLocation.getText()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"',start='"+editAppointmentDate.getValue().toString()+" "+editStartTime.getText()+":00', end='"+editAppointmentDate.getValue().toString()+" "+editEndTime.getText()+":00' where appointmentId="+appointmentID;
+                                s.executeUpdate(stmt);
+                                System.out.print("update done");
+
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     else
-                    { 
-                        try
-                        {
-                            Statement s=DBConnection.conn.createStatement();
-                            String stmt="update appointment set title='"+editTitle.getText()+"', location='"+editLocation.getText()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"',start='"+editAppointmentDate.getValue().toString()+" "+editStartTime.getText()+":00', end='"+editAppointmentDate.getValue().toString()+" "+editEndTime.getText()+":00' where appointmentId="+appointmentID;
-                            s.executeUpdate(stmt);
-                            System.out.print("update done");
-                            
-                        }
-                        catch(Exception e)
-                        {
-                            e.printStackTrace();
-                        }
+                    {
+                        if(!checkTimeMin(editStartTime.getText().toString()))
+                            errorStartTime.setText("invalid Mins");
+                        if(!checkTimeMin(editEndTime.getText().toString()))
+                            errorEndTime.setText("invalid Mins");
+                        if(!checkTimeHours(editStartTime.getText().toString()))
+                            errorStartTime.setText("Time Out of working Hours");
+                        if(!checkTimeHours(editEndTime.getText().toString()))
+                            errorEndTime.setText("Time Out of working Hours");
+
                     }
                 }
                 else
@@ -342,6 +358,27 @@ public class EditAppointmentController implements Initializable {
          System.out.flush();
         return FOUND;        
     }
+    public boolean checkTimeMin(String s)
+    {
+        String []timeParts=s.split(":");
+        
+        if(Integer.parseInt(timeParts[1])>=0&&Integer.parseInt(timeParts[1])<=59)
+        {
+            return true;
+        }
+        else return false;
+    }
+    
+    
+    public boolean checkTimeHours(String time)
+    {
+        String[] timeParts=time.split(":");
+        if(Integer.parseInt(timeParts[0])<9||Integer.parseInt(timeParts[0])>16)
+            return false;
+        else 
+            return true;
+    }
+    
     
     public void resetLabels()
     {

@@ -78,6 +78,9 @@ public class AddAppointmentController implements Initializable {
     public Label errorDescription;
     @FXML
     public Label errorType;
+    
+    @FXML public Label addedLabel;
+    
     Statement s;
     private ObservableList<String> cnameList;
     @Override
@@ -145,64 +148,72 @@ public class AddAppointmentController implements Initializable {
         {
             if(checkTime(startTime.getText().toString())&&checkTime(endTime.getText().toString()))
             {
-                
-                if(checkTimeAvailability())
+                if(checkTimeHours(startTime.getText().toString())&&checkTimeHours(endTime.getText().toString())&&checkTimeMin(startTime.getText().toString())&&checkTimeMin(endTime.getText().toString()))
                 {
-                    errorStartTime.setText("Time Slot Not Available");
-                    errorEndTime.setText("Time Slot Not Available");
+                    if(checkTimeAvailability())
+                    {
+                        errorStartTime.setText("Time Slot Not Available");
+                        errorEndTime.setText("Time Slot Not Available");
+                    }
+                    else
+                    {   
+                        System.out.println("not found in the table");
+                        int cid=-1;
+                        String customerQuery="select customerId from customer where customerName ='"+customerName.getSelectionModel().getSelectedItem().toString()+"'";
+                        try
+                        {
+                            ResultSet res=s.executeQuery(customerQuery);
+                            while(res.next())
+                            {
+                                cid=res.getInt(1);
+                            }
+                            String dateStart=appointmentDate.getValue().toString();
+                            System.out.println("so date is");
+                            System.out.println(dateStart);
+                            //String []dateParts=dateStart.split("-");
+                            String startDateTime=dateStart+" "+startTime.getText()+":00";
+                            String endDateTime=dateStart+" "+endTime.getText()+":00";
+
+
+
+                            //user id
+                            String stmt="insert into appointment values(null,"+cid+",1,'"+title.getText()+"','"+description.getText()+"','"+
+                                location.getText()+"','"+contact.getText()+"','"+type.getSelectionModel().getSelectedItem().toString()+"','"+url.getText()+"','"+startDateTime+"','"+endDateTime+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
+                           // s.executeQuery(stmt);
+                            s.executeUpdate(stmt);
+                            setLabelsEmpty();
+                            setFieldsEmpty();
+                            System.out.println("Added");
+                            addedLabel.setText("Appointment Added Successfully!");
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 else
-                {   
-                    System.out.println("not found in the table");
-                    int cid=-1;
-                    String customerQuery="select customerId from customer where customerName ='"+customerName.getSelectionModel().getSelectedItem().toString()+"'";
-                    try
-                    {
-                        ResultSet res=s.executeQuery(customerQuery);
-                        while(res.next())
-                        {
-                            cid=res.getInt(1);
-                        }
-                        String dateStart=appointmentDate.getValue().toString();
-                        System.out.println("so date is");
-                        System.out.println(dateStart);
-                        //String []dateParts=dateStart.split("-");
-                        String startDateTime=dateStart+" "+startTime.getText()+":00";
-                        String endDateTime=dateStart+" "+endTime.getText()+":00";
-                        System.out.println("query variables");
-                        System.out.println(cid);
-                        System.out.println(title.getText());
-                        System.out.println(description.getText());
-                        System.out.println(location.getText());
-                        System.out.println(contact.getText());
-                        System.out.println(type.getSelectionModel().getSelectedItem().toString());
-                        System.out.println(startDateTime);
-                        System.out.println(endDateTime);
-                        
-                        
-                        //user id
-                        String stmt="insert into appointment values(null,"+cid+",1,'"+title.getText()+"','"+description.getText()+"','"+
-                            location.getText()+"','"+contact.getText()+"','"+type.getSelectionModel().getSelectedItem().toString()+"','"+url.getText()+"','"+startDateTime+"','"+endDateTime+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
-                       // s.executeQuery(stmt);
-                        s.executeUpdate(stmt);
-                        setLabelsEmpty();
-                        setFieldsEmpty();
-                        System.out.println("Added");
-                    }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+                {
+                    if(!checkTimeMin(startTime.getText().toString()))
+                        errorStartTime.setText("invalid Mins");
+                    if(!checkTimeMin(endTime.getText().toString()))
+                        errorEndTime.setText("invalid Mins");
+                    if(!checkTimeHours(startTime.getText().toString()))
+                        errorStartTime.setText("Time Out of working Hours");
+                    if(!checkTimeHours(endTime.getText().toString()))
+                        errorEndTime.setText("Time Out of working Hours");
+                    
                 }
                 
             }
             else
             {
                 System.out.println("error inside");
-                if(checkTime(startTime.getText().toString()))
+                if(!checkTime(startTime.getText().toString()))
                     errorStartTime.setText("invalid Time Format");
-                if(checkTime(endTime.getText().toString()))
+                if(!checkTime(endTime.getText().toString()))
                     errorEndTime.setText("invalid Time Format");
+                
             }
         }
     }
@@ -249,7 +260,17 @@ public class AddAppointmentController implements Initializable {
                 if(empty&&(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=16))
                 {
                     FOUND=false;
-                }    
+                } 
+                else if(Integer.parseInt(startTimeParts[0])<9||Integer.parseInt(startTimeParts[0])>16)
+                {
+                    errorStartTime.setText("Time Out of Office Hours");
+                
+                    errorEndTime.setText("Time Out of Office Hours");
+                    System.out.println("insde Time Out of Office Hours");
+                    
+                    FOUND=true;
+                    break;
+                }
                 if(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=16)
                 {
 
@@ -298,13 +319,23 @@ public class AddAppointmentController implements Initializable {
         if(s.length()==5)
         {
             if((s.charAt(0)>='0'&&s.charAt(0)<='9')&&(s.charAt(1)>='0'&&s.charAt(1)<='9')&&(s.charAt(2)>=':')&&
-                    (s.charAt(3)>='0'&&s.charAt(3)<='9')&&(s.charAt(4)>='0'&&s.charAt(4)<='9'))
+                    (s.charAt(3)>='0'&&s.charAt(3)<='9')&&(s.charAt(4)>='0'&&s.charAt(4)<='9'))        
                 return true;
             else 
                 return false;
         }
         else 
             return false;
+    }
+    public boolean checkTimeMin(String s)
+    {
+        String []timeParts=s.split(":");
+        
+        if(Integer.parseInt(timeParts[1])>=0&&Integer.parseInt(timeParts[1])<=59)
+        {
+            return true;
+        }
+        else return false;
     }
     
     public void setLabelsEmpty()
@@ -333,6 +364,14 @@ public class AddAppointmentController implements Initializable {
         contact.clear();
         description.clear();
         location.clear();
+    }
+    public boolean checkTimeHours(String time)
+    {
+        String[] timeParts=time.split(":");
+        if(Integer.parseInt(timeParts[0])<9||Integer.parseInt(timeParts[0])>16)
+            return false;
+        else 
+            return true;
     }
     @FXML
     public void cancel(ActionEvent event)throws IOException
