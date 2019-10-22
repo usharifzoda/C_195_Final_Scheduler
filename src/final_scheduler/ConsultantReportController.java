@@ -75,10 +75,14 @@ public class ConsultantReportController implements Initializable
 
 
 
-        //////// lambda Expression is used here
+        /* 
+            
+            Lambda Expression is used here
+            Since Generate Button is used at least 3 times within the application 
+            I belive it would make sense to use it. 
+            Also this looks very clear and concise to anyone that would look at the code
         
-        
-        
+        */
         
         generateBtn.setOnAction((event) ->  {
            
