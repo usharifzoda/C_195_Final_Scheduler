@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.CustomerRegisteredController">
+   <children>
+      <Label layoutX="320.0" layoutY="22.0" text="Customer Report">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="yearComboBox" layoutX="120.0" layoutY="64.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Year" />
+      <ComboBox fx:id="monthComboBox" layoutX="381.0" layoutY="64.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Month" />
+      <Button fx:id="generateBtn" layoutX="672.0" layoutY="67.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Generate" />
+      <Button layoutX="672.0" layoutY="534.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="100.0" text="Back" />
+      <Label fx:id="errorYear" layoutX="120.0" layoutY="97.0" prefHeight="17.0" prefWidth="200.0" />
+      <Label fx:id="errorMonth" layoutX="381.0" layoutY="97.0" prefHeight="17.0" prefWidth="200.0" />
+      <Line endX="700.0" layoutX="101.0" layoutY="127.0" startX="-100.0" />
+      <TableView fx:id="reportTable" layoutX="195.0" layoutY="228.0" prefHeight="200.0" prefWidth="436.0">
+        <columns>
+          <TableColumn fx:id="monthYearCol" prefWidth="216.0" text="Month" />
+          <TableColumn fx:id="countCol" prefWidth="214.0" text="Count" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

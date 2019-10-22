@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.AppointmentReportController">
+   <children>
+      <Label layoutX="302.0" layoutY="26.0" text="Appointment Report">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="yearComboBox" layoutX="113.0" layoutY="78.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Year" />
+      <ComboBox fx:id="monthComboBox" layoutX="367.0" layoutY="78.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Month" />
+      <Button fx:id="generateBtn" layoutX="622.0" layoutY="78.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Generate" />
+      <Label fx:id="errorYearLabel" layoutX="115.0" layoutY="110.0" prefHeight="17.0" prefWidth="196.0" textFill="#f80e0e" />
+      <Label fx:id="errorMonthLabel" layoutX="368.0" layoutY="114.0" prefHeight="17.0" prefWidth="196.0" textFill="#f80e0e" />
+      <Line endX="700.0" layoutX="101.0" layoutY="127.0" startX="-100.0" />
+      <TableView fx:id="reportTable" layoutX="172.0" layoutY="228.0" prefHeight="200.0" prefWidth="458.0">
+        <columns>
+          <TableColumn fx:id="typeCol" prefWidth="218.0" text="Appointment Type" />
+          <TableColumn fx:id="countCol" prefWidth="239.0" text="Count" />
+        </columns>
+      </TableView>
+      <Label layoutX="266.0" layoutY="167.0" prefHeight="30.0" prefWidth="270.0" />
+      <Button layoutX="672.0" layoutY="542.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="100.0" text="Back" />
+   </children>
+</AnchorPane>

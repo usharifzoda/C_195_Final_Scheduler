@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="799.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.ConsultantReportController">
+   <children>
+      <Label layoutX="314.0" layoutY="27.0" text="Consultant Report">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <DatePicker fx:id="date" layoutX="198.0" layoutY="82.0" prefHeight="30.0" prefWidth="200.0" promptText="Select Date" />
+      <Button fx:id="generateBtn" layoutX="502.0" layoutY="82.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Generate" />
+      <Label fx:id="errorDate" layoutX="199.0" layoutY="119.0" prefHeight="17.0" prefWidth="200.0" textFill="#f50c0c" />
+      <Line endX="700.0" layoutX="101.0" layoutY="143.0" startX="-100.0" />
+      <TableView fx:id="consultantTable" layoutX="114.0" layoutY="179.0" prefHeight="281.0" prefWidth="601.0">
+        <columns>
+          <TableColumn fx:id="nameCol" prefWidth="153.0" text="Customer Name" />
+          <TableColumn fx:id="startCol" prefWidth="151.0" text="Start Time" />
+            <TableColumn fx:id="endCol" prefWidth="142.0" text="EndTime" />
+            <TableColumn fx:id="typeCol" prefWidth="153.0" text="Type" />
+        </columns>
+      </TableView>
+      <Button layoutX="657.0" layoutY="523.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="100.0" text="Back" />
+   </children>
+</AnchorPane>
