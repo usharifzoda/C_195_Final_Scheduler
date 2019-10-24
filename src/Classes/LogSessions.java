@@ -12,9 +12,9 @@ import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author usharifzoda
  */
+
 public class LogSessions {
     private static final String FILENAME = "log.txt";
     

@@ -30,10 +30,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
- *
- * @author DG sahib
+ * @author usharifzoda
  */
+
 public class AddAppointmentController implements Initializable {
 
     /**

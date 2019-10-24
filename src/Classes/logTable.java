@@ -6,9 +6,9 @@
 package Classes;
 
 /**
- *
- * @author DG sahib
+ * @author usharifzoda
  */
+
 public class logTable 
 {
     String timeStamp;

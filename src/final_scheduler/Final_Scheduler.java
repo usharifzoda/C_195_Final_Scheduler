@@ -17,6 +17,7 @@ import static Databases.DBConnection.conn;
 import java.sql.ResultSet;
 
 /**
+ * FXML Controller class
  *
  * @author usharifzoda
  */

@@ -30,9 +30,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class///..
+ * FXML Controller class
  *
- * @author DG sahib
+ * @author usharifzoda
  */
 public class ConsultantReportController implements Initializable 
 {

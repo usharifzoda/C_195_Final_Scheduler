@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author DG sahib
+ * @author usharifzoda
  */
 
 public class ReportsWindowController implements Initializable 

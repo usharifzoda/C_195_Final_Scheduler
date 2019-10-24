@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author DG sahib
+ * @author usharifzoda
  */
 public class AppointmentReportController implements Initializable {
 

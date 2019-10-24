@@ -31,7 +31,7 @@ import javax.swing.event.ChangeListener;
 /**
  * FXML Controller class
  *
- * @author DG sahib
+ * @author usharifzoda
  */
 public class CalendarAppointmentViewController implements Initializable 
 {    
