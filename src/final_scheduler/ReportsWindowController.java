@@ -5,6 +5,8 @@
  */
 package final_scheduler;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -75,7 +77,29 @@ public class ReportsWindowController implements Initializable
         window.show(); 
     }
     
-    
+    @FXML
+    public void generateLogFile(ActionEvent event) throws IOException
+    {
+        
+//        Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/logFileWindow.fxml"));
+//        Scene mainViewScene = new Scene(mainViewParent);
+//        
+//        Stage window = (Stage) ((Node)event.getSource()).getScene().getWindow();
+//        window.setScene(mainViewScene);
+//        window.show(); 
+        
+        File file = new File("log.txt");
+        if(file.exists()) {
+            if(Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().open(file);
+                } catch (IOException e) {
+                    System.out.println("Error Opening Log File: " + e.getMessage());
+                }
+            }
+        }
+        
+    }
     
     @FXML
     public void back(ActionEvent event)throws IOException

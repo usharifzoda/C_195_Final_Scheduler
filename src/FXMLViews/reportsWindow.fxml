@@ -7,16 +7,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.ReportsWindowController">
+<AnchorPane id="AnchorPane" prefHeight="558.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="final_scheduler.ReportsWindowController">
    <children>
       <Button layoutX="89.0" layoutY="92.0" mnemonicParsing="false" onAction="#generateAppointmentReport" prefHeight="50.0" prefWidth="200.0" text="Appointments Report" />
-      <Button layoutX="89.0" layoutY="163.0" mnemonicParsing="false" onAction="#generateConsultantScheduleReport" prefHeight="50.0" prefWidth="200.0" text="Consultant Schedule" />
-      <Button layoutX="89.0" layoutY="232.0" mnemonicParsing="false" onAction="#generateCustomerRegisteredReport" prefHeight="50.0" prefWidth="200.0" text="Customer Registered" />
-      <Button layoutX="254.0" layoutY="345.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="100.0" text="Back" />
+      <Button layoutX="89.0" layoutY="207.0" mnemonicParsing="false" onAction="#generateConsultantScheduleReport" prefHeight="50.0" prefWidth="200.0" text="Consultant Schedule" />
+      <Button layoutX="89.0" layoutY="303.0" mnemonicParsing="false" onAction="#generateCustomerRegisteredReport" prefHeight="50.0" prefWidth="200.0" text="Customer Registered" />
+      <Button layoutX="247.0" layoutY="504.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="100.0" text="Back" />
       <Label layoutX="143.0" layoutY="14.0" text="Reports">
          <font>
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
+      <Button layoutX="89.0" layoutY="403.0" mnemonicParsing="false" onAction="#generateLogFile" prefHeight="50.0" prefWidth="200.0" text="Log File" />
    </children>
 </AnchorPane>
