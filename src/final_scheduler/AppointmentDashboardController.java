@@ -42,6 +42,8 @@ public class AppointmentDashboardController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    // GUI variables
+    
     @FXML TableView<appointment> appointmentTable;
     @FXML TableColumn<appointment, String> appointmentCName;
     @FXML TableColumn<appointment, String> appointmentTitle;
@@ -65,6 +67,7 @@ public class AppointmentDashboardController implements Initializable {
         appointmentStart.setCellValueFactory(new PropertyValueFactory<appointment, String>("start"));
         appointmentEnd.setCellValueFactory(new PropertyValueFactory<appointment, String>("end"));
         appointmentType.setCellValueFactory(new PropertyValueFactory<appointment, String>("type"));
+        
         appList=FXCollections.observableArrayList();
         try
         {
@@ -86,6 +89,9 @@ public class AppointmentDashboardController implements Initializable {
         
         
     }  
+    
+    
+    
     @FXML
     public void back(ActionEvent event)throws IOException
     {
@@ -119,7 +125,8 @@ public class AppointmentDashboardController implements Initializable {
         }else {
             boolean answer = confirmDelete();
             
-            if(answer){
+            if(answer)
+            {
                 appointment selectAppointment;
                 ObservableList<appointment> allAppointments;
                 allAppointments = appointmentTable.getItems();
@@ -191,7 +198,7 @@ public class AppointmentDashboardController implements Initializable {
     
     
     
-     public static boolean confirmDelete()
+    public static boolean confirmDelete()
     {
         boolean deleteAnswer = true;
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
