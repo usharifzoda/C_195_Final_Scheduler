@@ -12,6 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,9 +34,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
+ * FXML Controller class
+ *
  * @author usharifzoda
  */
-
 public class AddAppointmentController implements Initializable {
 
     /**
@@ -57,8 +62,9 @@ public class AddAppointmentController implements Initializable {
     public TextField contact;
     @FXML
     public TextArea description;
+    
     @FXML
-    public TextField location;
+    public ComboBox TimeZone;
     @FXML
     public Label errorCustomerName;
     @FXML
@@ -78,14 +84,23 @@ public class AddAppointmentController implements Initializable {
     @FXML
     public Label errorType;
     
-    @FXML public Label addedLabel;
-    
+    @FXML
+    public Label errorTimeZone;
     Statement s;
     private ObservableList<String> cnameList;
+    
+    
+    String startT;
+    String endT;
+    
+    
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
         type.setItems(FXCollections.observableArrayList("Introduction Checkup","Brief Checkup","Full Checkup"));
+        TimeZone.setItems(FXCollections.observableArrayList("America/Phoenix","America/New_York","Europe/London"));
         cnameList=FXCollections.observableArrayList();
         String stmt ="select customerName from customer";
         try
@@ -117,7 +132,7 @@ public class AddAppointmentController implements Initializable {
         setLabelsEmpty();
         if(customerName.getSelectionModel().isEmpty()||appointmentDate.getValue()==null||startTime.getText().isEmpty()||
                 endTime.getText().isEmpty()||url.getText().isEmpty()||title.getText().isEmpty()||contact.getText().isEmpty()||
-                description.getText().isEmpty()||type.getSelectionModel().isEmpty())
+                description.getText().isEmpty()||type.getSelectionModel().isEmpty()||TimeZone.getSelectionModel().isEmpty())
         {
             
             System.out.println("errro");
@@ -139,12 +154,41 @@ public class AddAppointmentController implements Initializable {
                 errorContact.setText("Contact Cannot be empty");
             if(description.getText().isEmpty())
                 errorDescription.setText("Description Cannot be empty");
-//            if(location.getText().isEmpty())
-//                errorLocation.setText("Description Cannot be empty");
+            if(TimeZone.getSelectionModel().isEmpty())
+                errorTimeZone.setText("Select Location");
 
         }
         else
         {
+            String dateStart=appointmentDate.getValue().toString();
+            String startDateTime=dateStart+" "+startTime.getText()+":00";
+            String endDateTime=dateStart+" "+endTime.getText()+":00";
+            String zoneOfAppointment=TimeZone.getSelectionModel().getSelectedItem().toString();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            LocalDateTime sDateTime = LocalDateTime.parse(startDateTime, formatter);
+            LocalDateTime eDateTime = LocalDateTime.parse(endDateTime, formatter);
+
+            ZonedDateTime startZonedDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.of(zoneOfAppointment));
+            String startUTCTime = startZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+            startUTCTime=startUTCTime.substring(0, startUTCTime.length()-1);
+            startUTCTime+=":00";
+            startUTCTime=startUTCTime.replace('T', ' ');
+
+            System.out.println("startUTCTime");
+            System.out.println(startUTCTime);
+
+            ZonedDateTime endZonedDateAndTime=ZonedDateTime.of(eDateTime, ZoneId.of(zoneOfAppointment));
+            String endUTCTime = endZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+            endUTCTime=endUTCTime.substring(0, endUTCTime.length()-1);
+            endUTCTime+=":00";
+            endUTCTime=endUTCTime.replace('T', ' ');
+
+            System.out.println("end UTCTime");
+            System.out.println(endUTCTime);
+            startT=startUTCTime;
+            endT=endUTCTime;
+                            
             if(checkTime(startTime.getText().toString())&&checkTime(endTime.getText().toString()))
             {
                 if(checkTimeHours(startTime.getText().toString())&&checkTimeHours(endTime.getText().toString())&&checkTimeMin(startTime.getText().toString())&&checkTimeMin(endTime.getText().toString()))
@@ -156,7 +200,6 @@ public class AddAppointmentController implements Initializable {
                     }
                     else
                     {   
-                        System.out.println("not found in the table");
                         int cid=-1;
                         String customerQuery="select customerId from customer where customerName ='"+customerName.getSelectionModel().getSelectedItem().toString()+"'";
                         try
@@ -166,24 +209,15 @@ public class AddAppointmentController implements Initializable {
                             {
                                 cid=res.getInt(1);
                             }
-                            String dateStart=appointmentDate.getValue().toString();
-                            System.out.println("so date is");
-                            System.out.println(dateStart);
-                            //String []dateParts=dateStart.split("-");
-                            String startDateTime=dateStart+" "+startTime.getText()+":00";
-                            String endDateTime=dateStart+" "+endTime.getText()+":00";
-
-
-
+                            
                             //user id
                             String stmt="insert into appointment values(null,"+cid+",1,'"+title.getText()+"','"+description.getText()+"','"+
-                                location.getText()+"','"+contact.getText()+"','"+type.getSelectionModel().getSelectedItem().toString()+"','"+url.getText()+"','"+startDateTime+"','"+endDateTime+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
-                           // s.executeQuery(stmt);
+                                TimeZone.getSelectionModel().getSelectedItem().toString()+"','"+contact.getText()+"','"+type.getSelectionModel().getSelectedItem().toString()+"','"+url.getText()+"','"+startUTCTime+"','"+endUTCTime+"',CURDATE(),CURRENT_USER(),now(),CURRENT_USER())";
+                            //s.executeQuery(stmt);
                             s.executeUpdate(stmt);
                             setLabelsEmpty();
                             setFieldsEmpty();
                             System.out.println("Added");
-                            addedLabel.setText("Appointment Added Successfully!");
                         }
                         catch(Exception e)
                         {
@@ -221,8 +255,14 @@ public class AddAppointmentController implements Initializable {
     {
         boolean FOUND=false;
        
-        String st=startTime.getText().toString();
-        String et=endTime.getText().toString();
+        String startT=startTime.getText().toString();
+        String endT=endTime.getText().toString();
+//        String st=
+//        String et=
+        String sTime=startTime.getText();//ST.s
+        String []startTimeParts=sTime.split(":");
+        String eTime=endTime.getText();//ST.e
+        String []endTimeParts=eTime.split(":");
         LocalDateTime [][]times;
         int total=0;
         try
@@ -242,10 +282,7 @@ public class AddAppointmentController implements Initializable {
                i++;
             }
             boolean empty=false;
-            String sTime=startTime.getText();//ST.s
-            String []startTimeParts=sTime.split(":");
-            String eTime=endTime.getText();//ST.e
-            String []endTimeParts=eTime.split(":");
+           
             for(int j=0;j<i;j++)
             {
                 String time=times[j][0].toString();
@@ -256,11 +293,11 @@ public class AddAppointmentController implements Initializable {
                 String []t2Parts=t2[1].split(":");
                 if(i==0)
                     empty=true;
-                if(empty&&(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=16))
+                if(empty&&(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=23))
                 {
                     FOUND=false;
                 } 
-                else if(Integer.parseInt(startTimeParts[0])<9||Integer.parseInt(startTimeParts[0])>16)
+                else if(Integer.parseInt(startTimeParts[0])<9||Integer.parseInt(startTimeParts[0])>23)
                 {
                     errorStartTime.setText("Time Out of Office Hours");
                 
@@ -270,9 +307,9 @@ public class AddAppointmentController implements Initializable {
                     FOUND=true;
                     break;
                 }
-                if(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=16)
+                if(Integer.parseInt(startTimeParts[0])>=9&&Integer.parseInt(startTimeParts[0])<=23)
                 {
-
+                        //09:00-10:00  09:00   10:00 
                     if((Integer.parseInt(startTimeParts[0])==Integer.parseInt(t1Parts[0])&&Integer.parseInt(startTimeParts[1])>=Integer.parseInt(t1Parts[1]))&&
                         ((Integer.parseInt(endTimeParts[0])==Integer.parseInt(t2Parts[0])&&Integer.parseInt(endTimeParts[1])<=Integer.parseInt(t2Parts[1])))||(Integer.parseInt(endTimeParts[0])==Integer.parseInt(t1Parts[0])&&Integer.parseInt(endTimeParts[1])<=59))
                     {
@@ -317,7 +354,7 @@ public class AddAppointmentController implements Initializable {
     {
         if(s.length()==5)
         {
-            if((s.charAt(0)>='0'&&s.charAt(0)<='9')&&(s.charAt(1)>='0'&&s.charAt(1)<='9')&&(s.charAt(2)>=':')&&
+            if((s.charAt(0)>='0'&&s.charAt(0)<='9')&&(s.charAt(1)>='0'&&s.charAt(1)<='9')&&(s.charAt(2)==':')&&
                     (s.charAt(3)>='0'&&s.charAt(3)<='9')&&(s.charAt(4)>='0'&&s.charAt(4)<='9'))        
                 return true;
             else 
@@ -348,6 +385,7 @@ public class AddAppointmentController implements Initializable {
         errorContact.setText("");
         errorDescription.setText("");
         errorType.setText("");
+        errorTimeZone.setText("");
     }
     
     
@@ -362,12 +400,12 @@ public class AddAppointmentController implements Initializable {
         title.clear();
         contact.clear();
         description.clear();
-        location.clear();
+        TimeZone.getSelectionModel().clearSelection();
     }
     public boolean checkTimeHours(String time)
     {
         String[] timeParts=time.split(":");
-        if(Integer.parseInt(timeParts[0])<9||Integer.parseInt(timeParts[0])>16)
+        if(Integer.parseInt(timeParts[0])<9||Integer.parseInt(timeParts[0])>23)
             return false;
         else 
             return true;

@@ -52,14 +52,14 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void loginButtonPressed(ActionEvent event) throws IOException {
         System.out.println("Success! Username: " + usernameTextField.getText() + " || Password:" + passwordTextField.getText());
-        Locale.setDefault(new Locale ("fr"));
+//        Locale.setDefault(new Locale ("fr"));
         Locale myLocale = Locale.getDefault();
         writer=new FileWriter("log.txt",true);
         buffWriter=new BufferedWriter(writer);
 
         logFile="log.txt";
         
-        if((Locale.getDefault().getLanguage().equals("fr") || Locale.getDefault().getLanguage().equals("en")) && !((usernameTextField.getText().equals("test")) && (passwordTextField.getText().equals("test")))){
+        if(!((usernameTextField.getText().equals("test")) && (passwordTextField.getText().equals("test")))){
             recordActivity(true);
 //            if(Locale.getDefault().getLanguage().equals("fr")){
 //            System.out.println("Login ERROR");
@@ -113,7 +113,9 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        Locale.setDefault(new Locale ("fr"));
+        // If the Locale is set to France all the message will be translate to french with the button.  
+//        Locale.setDefault(new Locale ("fr"));
+
         bundle = ResourceBundle.getBundle("language_files/language");
 //        
         if((Locale.getDefault().getLanguage().equals("fr"))){

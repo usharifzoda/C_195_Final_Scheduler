@@ -14,6 +14,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -37,7 +40,8 @@ import javafx.stage.Stage;
  *
  * @author usharifzoda
  */
-public class EditAppointmentController implements Initializable {
+public class EditAppointmentController implements Initializable 
+{
 
     /**
      * Initializes the controller class.
@@ -47,8 +51,7 @@ public class EditAppointmentController implements Initializable {
     private TextField editCName;
     @FXML
     private TextField editTitle;
-    @FXML
-    private TextField editLocation;
+    
     @FXML
     private TextField editContact;
     @FXML
@@ -61,12 +64,12 @@ public class EditAppointmentController implements Initializable {
     private DatePicker editAppointmentDate;
     @FXML
     private ComboBox editAppointmentType;
-    
+    @FXML
+    public ComboBox TimeZone;
     int appointmentID;
     @FXML
     private Label errorTitle;
-    @FXML
-    private Label errorLocation;
+    
     @FXML
     private Label errorContact;
     @FXML
@@ -79,6 +82,8 @@ public class EditAppointmentController implements Initializable {
     private Label errorType;
     @FXML
     private Label errorDate;
+    @FXML
+    public Label errorTimeZone;
     String date;
     ObservableList<String> typeList;
     String intialTime="";
@@ -89,41 +94,78 @@ public class EditAppointmentController implements Initializable {
     }    
     public void initEditAppointment(appointment app, int index)
     {
-        String dateStartTime=app.getStart();
-        String []dateStartTimeParts=dateStartTime.split(" ");
-        
-        String[] dateParts=dateStartTimeParts[0].split("-");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
-	LocalDate appDate = LocalDate.parse(dateParts[1]+"/"+dateParts[2]+"/"+dateParts[0], formatter);
-        String dateEndTime=app.getEnd();
-        String []dateEndTimeParts=dateEndTime.split(" ");
         editCName.setText(app.getName());
         editTitle.setText(app.getTitle());
-        editLocation.setText(app.getLocation());
+        TimeZone.getSelectionModel().select(app.getLocation());
         editContact.setText(app.getContact());
         
-        String []sTimeParts=dateStartTimeParts[1].split(":");
-        editStartTime.setText(sTimeParts[0]+":"+sTimeParts[1]);
-        String []eTimeParts=dateEndTimeParts[1].split(":");
-        editEndTime.setText(eTimeParts[0]+":"+eTimeParts[1]);
+        String st=app.getStart();
+        String et=app.getEnd();
+        
+        //getting substring
+        
+        st=st.substring(0, 16);
+        et=et.substring(0, 16);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startLocalDateTime=LocalDateTime.parse(st,formatter);
+        LocalDateTime endLocalDateTime=LocalDateTime.parse(et,formatter);
+        
+        ZonedDateTime startDefaultZonedTime=ZonedDateTime.of(startLocalDateTime, ZoneId.systemDefault());
+        ZonedDateTime endDefaultZonedTime=ZonedDateTime.of(endLocalDateTime, ZoneId.systemDefault());
+        
+        
+        ZonedDateTime startUTCTime = startDefaultZonedTime.withZoneSameInstant(ZoneId.of("UTC"));
+        ZonedDateTime endUTCTime = endDefaultZonedTime.withZoneSameInstant(ZoneId.of("UTC"));
+         
+        
+        ZonedDateTime startZonedTime = startUTCTime.withZoneSameInstant(ZoneId.of(app.getLocation()));
+        ZonedDateTime endZonedTime = endUTCTime.withZoneSameInstant(ZoneId.of(app.getLocation()));
+        
+        
+        String sstt=startZonedTime.toString();
+        String eett=endZonedTime.toString();
+        
+        
+        sstt=sstt.substring(0, 16);
+        eett=eett.substring(0, 16);
+        
+        String startTimeParts[]=sstt.split("T");
+        String endTimeParts[]=eett.split("T");
+        
+        editStartTime.setText(startTimeParts[1]);
+        editEndTime.setText(endTimeParts[1]);
+        
+        intialTime=startTimeParts[1];
+        finalTime=endTimeParts[1];
+        
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate DATE=LocalDate.parse(startTimeParts[0],format1);
+        
+        editAppointmentDate.setValue(DATE);
         editDesc.setText(app.getDescription());
         
-        editAppointmentDate.setValue(appDate);
+        
         typeList=FXCollections.observableArrayList("Introduction Checkup","Brief Checkup","Full Checkup");
+        
+        TimeZone.setItems(FXCollections.observableArrayList("America/Phoenix","America/New_York","Europe/London"));
+        
+        
         editAppointmentType.setItems(typeList);
         editAppointmentType.getSelectionModel().select(app.getType());
-        intialTime=sTimeParts[0]+":"+sTimeParts[1];
-        finalTime=eTimeParts[0]+":"+eTimeParts[1];
+        
         try
         {
             Statement S=DBConnection.conn.createStatement();
             
             String query="select customerId from customer where customerName='"+editCName.getText()+"'";
+            
             ResultSet r=S.executeQuery(query);
             int cid=-1;
             while(r.next())
                 cid=r.getInt(1);
-            String stmt="select appointmentId from appointment where customerId="+cid+" && start = '"+editAppointmentDate.getValue().toString()+" "+editStartTime.getText()+":00'";
+            String stmt="select appointmentId from appointment where customerId="+cid+" && start = '"+DATE+" "+startTimeParts[1]+":00'";
+            
             r=S.executeQuery(stmt);
             
             while(r.next())
@@ -135,14 +177,7 @@ public class EditAppointmentController implements Initializable {
             e.printStackTrace();
         }
         
-        try
-        {
-            s=DBConnection.conn.createStatement();
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
+        
         editAppointmentType.setItems(FXCollections.observableArrayList("Introduction Checkup","Brief Checkup","Full Checkup"));
         
     }
@@ -151,14 +186,14 @@ public class EditAppointmentController implements Initializable {
     public void updateAppointment(ActionEvent event)
     {
         resetLabels();
-        if(editTitle.getText().isEmpty()||editLocation.getText().isEmpty()||editContact.getText().isEmpty()||editStartTime.getText().isEmpty()||editEndTime.getText().isEmpty()||editDesc.getText().isEmpty()||editAppointmentType.getSelectionModel().isEmpty())
+        if(editTitle.getText().isEmpty()||TimeZone.getSelectionModel().isEmpty()||editContact.getText().isEmpty()||editStartTime.getText().isEmpty()||editEndTime.getText().isEmpty()||editDesc.getText().isEmpty()||editAppointmentType.getSelectionModel().isEmpty())
         {
             if(editTitle.getText().isEmpty())
                 errorTitle.setText("Title Cannot be empty");
             if(editContact.getText().isEmpty())
                 errorContact.setText("Contact Cannot be empty"); 
-            if(editLocation.getText().isEmpty())
-                errorLocation.setText("Location Cannot be empty");
+            if(TimeZone.getSelectionModel().isEmpty())
+                errorTimeZone.setText("Location Cannot be empty");
             if(editStartTime.getText().isEmpty())
                 errorStartTime.setText("Start Time Cannot be empty");
             if(editEndTime.getText().isEmpty())
@@ -177,7 +212,7 @@ public class EditAppointmentController implements Initializable {
                 try
                 {
                     Statement s=DBConnection.conn.createStatement();
-                    String stmt="update appointment set title='"+editTitle.getText()+"', location='"+editLocation.getText()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"' where appointmentId="+appointmentID;
+                    String stmt="update appointment set title='"+editTitle.getText()+"', location='"+TimeZone.getSelectionModel().getSelectedItem().toString()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"' where appointmentId="+appointmentID;
                     s.executeUpdate(stmt);
                     System.out.print("update done");
                     
@@ -190,6 +225,30 @@ public class EditAppointmentController implements Initializable {
             }
             else 
             {
+                String startDateTime=editAppointmentDate.getValue().toString()+" "+editStartTime.getText()+":00";
+                System.out.println(startDateTime);
+                String endDateTime=editAppointmentDate.getValue().toString()+" "+editEndTime.getText()+":00";
+                System.out.println(endDateTime);
+                String zoneOfAppointment=TimeZone.getSelectionModel().getSelectedItem().toString();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+                LocalDateTime sDateTime = LocalDateTime.parse(startDateTime, formatter);
+                LocalDateTime eDateTime = LocalDateTime.parse(endDateTime, formatter);
+
+                ZonedDateTime startZonedDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.of(zoneOfAppointment));
+                String startUTCTime = startZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+                startUTCTime=startUTCTime.substring(0, startUTCTime.length()-1);
+                startUTCTime+=":00";
+                startUTCTime=startUTCTime.replace('T', ' ');
+
+                System.out.println(startUTCTime);
+
+                ZonedDateTime endZonedDateAndTime=ZonedDateTime.of(eDateTime, ZoneId.of(zoneOfAppointment));
+                String endUTCTime = endZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+                endUTCTime=endUTCTime.substring(0, endUTCTime.length()-1);
+                endUTCTime+=":00";
+                endUTCTime=endUTCTime.replace('T', ' ');
+                
                 
                 if(checkTime(editStartTime.getText().toString())&&checkTime(editEndTime.getText().toString()))
                 {
@@ -207,7 +266,7 @@ public class EditAppointmentController implements Initializable {
                             try
                             {
                                 Statement s=DBConnection.conn.createStatement();
-                                String stmt="update appointment set title='"+editTitle.getText()+"', location='"+editLocation.getText()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"',start='"+editAppointmentDate.getValue().toString()+" "+editStartTime.getText()+":00', end='"+editAppointmentDate.getValue().toString()+" "+editEndTime.getText()+":00' where appointmentId="+appointmentID;
+                                String stmt="update appointment set title='"+editTitle.getText()+"', location='"+TimeZone.getSelectionModel().getSelectedItem().toString()+"',contact='"+editContact.getText()+"',type='"+editAppointmentType.getSelectionModel().getSelectedItem().toString()+"',start='"+startUTCTime+"', end='"+endUTCTime+"' where appointmentId="+appointmentID;
                                 s.executeUpdate(stmt);
                                 System.out.print("update done");
 
@@ -384,7 +443,7 @@ public class EditAppointmentController implements Initializable {
     {
         errorTitle.setText("");
         errorContact.setText(""); 
-        errorLocation.setText("");
+        errorTimeZone.setText("");
         errorStartTime.setText("");
         errorEndTime.setText("");
         errorDesc.setText("");

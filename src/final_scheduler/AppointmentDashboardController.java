@@ -5,16 +5,19 @@
  */
 package final_scheduler;
 
-import Classes.Customer;
 import Classes.appointment;
 import Databases.DBConnection;
 import Databases.Query;
-import static final_scheduler.AddEditDeleteCustomerController.confirmDelete;
 import javafx.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -71,12 +74,34 @@ public class AppointmentDashboardController implements Initializable {
         appList=FXCollections.observableArrayList();
         try
         {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             s=DBConnection.conn.createStatement();
             String stmt="select c.customerName,a.title,a.description,a.location,a.contact,a.start,a.end,a.type from customer c, appointment a where c.customerId=a.customerId";
             ResultSet r=s.executeQuery(stmt);
             while(r.next())
             {
-                appList.add(new appointment(r.getString("c.customerName"),r.getString("a.title"),r.getString("a.description"),r.getString("a.location"),r.getString("a.contact"),r.getString("a.start"),r.getString("a.end"),r.getString("a.type")));
+                String StartTime= r.getString("a.start");
+                String EndTime= r.getString("a.end");
+                
+                StartTime = StartTime.substring(0,19);
+                EndTime = EndTime.substring(0,19);
+                
+                LocalDateTime startLocalDateTime=LocalDateTime.parse(StartTime,formatter);
+                ZonedDateTime startUTCTime=ZonedDateTime.of(startLocalDateTime, ZoneId.of("UTC"));
+                ZonedDateTime startZonedTime = startUTCTime.withZoneSameInstant(ZoneId.systemDefault());
+                String STARTTIME=startZonedTime.toString();
+                STARTTIME=STARTTIME.replace('T', ' ');
+                
+                
+                
+                LocalDateTime endLocalDateTime=LocalDateTime.parse(EndTime,formatter);
+                ZonedDateTime endUTCTime=ZonedDateTime.of(endLocalDateTime, ZoneId.of("UTC"));
+                ZonedDateTime endZonedTime = endUTCTime.withZoneSameInstant(ZoneId.systemDefault());
+                String ENDTIME=endZonedTime.toString();
+                ENDTIME=ENDTIME.replace('T', ' ');
+                
+                
+                appList.add(new appointment(r.getString("c.customerName"),r.getString("a.title"),r.getString("a.description"),r.getString("a.location"),r.getString("a.contact"),STARTTIME,ENDTIME,r.getString("a.type")));
             }
             appointmentTable.setItems(appList);
             
@@ -137,13 +162,27 @@ public class AppointmentDashboardController implements Initializable {
                 try
                 {
                     Statement S=DBConnection.conn.createStatement();
-
                     String query="select customerId from customer where customerName='"+selectAppointment.getName()+"'";
                     ResultSet r=S.executeQuery(query);
                     int cid=-1;
                     while(r.next())
                         cid=r.getInt(1);
-                    String stmt="select appointmentId from appointment where customerId="+cid+" && start='"+selectAppointment.getStart()+"'";
+                    
+                    
+                    String localTimeString=(selectAppointment.getStart()).substring(0, 16);
+                    localTimeString=localTimeString+":00";
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+                    LocalDateTime LDateTime = LocalDateTime.parse(localTimeString, formatter);
+                    
+
+                    ZonedDateTime startZonedDateAndTime=ZonedDateTime.of(LDateTime, ZoneId.systemDefault());
+                    String startUTCTime = startZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+                     
+//                    ZonedDateTime startZonedDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.of(zoneOfAppointment));
+//                    String startUTCTime = startZonedDateAndTime.withZoneSameInstant(ZoneOffset.UTC).toString();
+                    String stmt="select appointmentId from appointment where customerId="+cid+" && start='"+startUTCTime+"'";
+                    
                     r=S.executeQuery(stmt);
 
                     while(r.next())
@@ -157,7 +196,6 @@ public class AppointmentDashboardController implements Initializable {
                 String stmt = "delete from appointment where appointmentId =" + appointmentID;
                 
                 Query.makeQuery(stmt);
-                
                 // Load the tableView again after Query to make refresh
                 Parent mainViewParent = FXMLLoader.load(getClass().getResource("/FXMLViews/appointmentDashboard.fxml"));
                 Scene mainViewScene = new Scene(mainViewParent);

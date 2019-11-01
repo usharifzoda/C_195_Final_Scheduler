@@ -10,7 +10,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -84,12 +90,12 @@ public class MainViewController implements Initializable {
     {
         try
         {
-            String timeNow = LocalTime.now().toString(); 
-            String []timeNowParts=timeNow.split(":");
-            System.out.println(timeNowParts[0]+":"+timeNowParts[1]);
+            String timeNow = LocalDate.now().toString(); 
+            //String []timeNowParts=timeNow.split(":");
+            //System.out.println(timeNowParts[0]+":"+timeNowParts[1]);
             s=DBConnection.conn.createStatement();
             
-            String stmt="select c.customerName, a.start from appointment a,customer c  where a.customerId=c.customerId and userId=1 and start like '"+timeNowParts[0]+":"+timeNowParts[1]+"'";
+            String stmt="select c.customerName, a.start from appointment a,customer c  where a.customerId=c.customerId and userId=1 and start like '"+timeNow+"%'";
             ResultSet r=s.executeQuery(stmt);
             while(r.next())
             {
@@ -99,7 +105,10 @@ public class MainViewController implements Initializable {
                     alert.setTitle("Appointment Notification");
                     alert.setHeaderText("You have appointment in next 15 minutes with "+r.getString(1)+" at "+r.getString(2));
                     Optional<ButtonType> result = alert.showAndWait();
+                    break;
                 }
+                else
+                    System.out.println(" no alert");                    
                 
             }
             
@@ -113,26 +122,49 @@ public class MainViewController implements Initializable {
     
     public boolean isAppointmentTime(String time)
     {
-       String timeNow = LocalTime.now().toString(); 
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        time = time.substring(0,19);
+        System.out.println("*************************************");
+        System.out.println("PRINTING TIME: " + time);
+        System.out.println("*************************************");
+        LocalDateTime sDateTime = LocalDateTime.parse(time, formatter);
+        
+
+        String startZonedDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.systemDefault()).toString();
+        startZonedDateAndTime=startZonedDateAndTime.substring(0, 16);
+        System.out.println();
+        System.out.println("current tme to utc");
+        System.out.println(startZonedDateAndTime);
+        int[] currentTime= new int[2];
+        String timeNow = LocalTime.now().toString();
+        System.out.println("local tme tme to utc");
+        System.out.println(timeNow);
        String []timeNowParts=timeNow.split(":");
-       String []timeParts=time.split(" ");
-       int[] currentTime= new int[2];
-       int[] DBTime= new int[2];
+       String []timeParts=startZonedDateAndTime.split("T");
+       
+       String[] DBTime= timeParts[1].split(":");
+       
        currentTime[0]=Integer.parseInt(timeNowParts[0]);
        currentTime[1]=Integer.parseInt(timeNowParts[1]);
-       DBTime[0]=Integer.parseInt(timeParts[0]);
-       DBTime[1]=Integer.parseInt(timeParts[1]);
        
-       if(currentTime[1]==DBTime[0])
+//       System.out.println("BEFOR FFFSS");
+//       System.out.println(currentTime[0]+" == "+DBTime[0]);
+       if(currentTime[0]==Integer.parseInt(DBTime[0]))
        {
-           if(DBTime[1]-currentTime[1]==15)
+           if(Integer.parseInt(DBTime[1])-currentTime[1]==15)
+           {
+               
                return true;
+           }
        }
-       else if(currentTime[1]==DBTime[0]+1)
+       else if(currentTime[0]+1==Integer.parseInt(DBTime[0]))
        {
-           if((60-currentTime[1])+DBTime[1]==15)
-               return true; 
-      }
+           if((60-currentTime[1])+Integer.parseInt(DBTime[1])==15)
+           {
+               return true;
+           } 
+        }
        
         return false;
     }    
