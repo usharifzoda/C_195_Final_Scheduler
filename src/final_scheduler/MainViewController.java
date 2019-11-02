@@ -124,34 +124,47 @@ public class MainViewController implements Initializable {
     {
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        time = time.substring(0,19);
-        System.out.println("*************************************");
-        System.out.println("PRINTING TIME: " + time);
-        System.out.println("*************************************");
+        time = time.substring(0, 19);
         LocalDateTime sDateTime = LocalDateTime.parse(time, formatter);
         
 
-        String startZonedDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.systemDefault()).toString();
-        startZonedDateAndTime=startZonedDateAndTime.substring(0, 16);
+        ZonedDateTime startUTCDateAndTime=ZonedDateTime.of(sDateTime, ZoneId.of("UTC"));
+        ZonedDateTime endZonedTime = startUTCDateAndTime.withZoneSameInstant(ZoneId.systemDefault());
+        String STARTTIME=endZonedTime.toString();
+
+                
+                
+        STARTTIME=STARTTIME.substring(0, 16);
+        
         System.out.println();
         System.out.println("current tme to utc");
-        System.out.println(startZonedDateAndTime);
+        
+        System.out.println(STARTTIME);
         int[] currentTime= new int[2];
         String timeNow = LocalTime.now().toString();
+        
         System.out.println("local tme tme to utc");
         System.out.println(timeNow);
+        
        String []timeNowParts=timeNow.split(":");
-       String []timeParts=startZonedDateAndTime.split("T");
+       String []timeParts=STARTTIME.split("T");
        
        String[] DBTime= timeParts[1].split(":");
        
        currentTime[0]=Integer.parseInt(timeNowParts[0]);
        currentTime[1]=Integer.parseInt(timeNowParts[1]);
        
-//       System.out.println("BEFOR FFFSS");
-//       System.out.println(currentTime[0]+" == "+DBTime[0]);
+       System.out.println("======== before comparision =============");
+       System.out.println();
+       System.out.println("======== if 1 =============");
+       System.out.println(currentTime[0]+" == "+DBTime[0]);
+       System.out.println();
+       System.out.println("======== if 2 =============");
+       
+       System.out.println(currentTime[0]+1+" == "+Integer.parseInt(DBTime[0]));
        if(currentTime[0]==Integer.parseInt(DBTime[0]))
-       {
+       {System.out.println();
+           System.out.println(DBTime[1]+" - "+currentTime[1]+" == "+15);
            if(Integer.parseInt(DBTime[1])-currentTime[1]==15)
            {
                
@@ -160,6 +173,7 @@ public class MainViewController implements Initializable {
        }
        else if(currentTime[0]+1==Integer.parseInt(DBTime[0]))
        {
+           System.out.println("("+60+" - "+currentTime[1]+")+"+Integer.parseInt(DBTime[1])+"==15");
            if((60-currentTime[1])+Integer.parseInt(DBTime[1])==15)
            {
                return true;
